@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" type="image/x-icon" href="">
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="{{ csrf_token }}">
+
+    <title>Login | Unibiztec</title>
+    {% load static %}
+    <!-- Fonts -->
+    <link rel="dns-prefetch" href="//fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+
+</head>
+
+<body>
+    <div id="app">
+        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
+            <div class="container">
+                <a class="navbar-brand" href="{% url 'login' %}"> HRMS
+                </a>
+               
+            </div>
+        </nav>
+
+        <main class="py-4">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-7">
+                        
+                        <div class="card" style="top: 50%;">
+                            <div class="card-header" style="font-weight: 700;">Secure Login</div>
+            
+                            <div class="card-body">
+                                <form method="POST" action="{% url 'login' %}">
+                                   {% csrf_token %}
+                                    <div class="row mb-3">
+                                        <label for="" class="col-md-4 col-form-label text-md-end" style="font-weight: 500;">User</label>
+            
+                                        <div class="col-md-6">
+                                            <input id="username" type="text" class="form-control" name="{{form.username.name}}" value="{{form.username.value}}" required >
+                                            {% if form.username.errors %}
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{form.username.errors}}</strong>
+                                                </span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+            
+                                    <div class="row mb-3">
+                                        <label for="password" class="col-md-4 col-form-label text-md-end" style="font-weight: 500;">Password</label>
+            
+                                        <div class="col-md-6">
+                                            <input id="password" type="password" class="form-control {% if form.password.errors %} is-invalid {% endif %}" name="{{form.password.name}}" autocomplete="current-password" required>
+            
+                                            {% if form.password.errors %}
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{form.password.errors}}</strong>
+                                                </span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+            
+                                    <div class="row mb-0">
+                                        <div class="col-md-8 offset-md-4">
+                                            <button type="submit" class="btn btn-primary">
+                                                Login
+                                            </button>
+            
+                                            
+                                        </div>
+                                    </div>
+
+                                    {% if form.non_field_errors %}
+                                                <span class="text-danger" role="alert">
+                                                    <strong>{{form.non_field_errors}}</strong>
+                                                </span>
+                                            {% endif %}
+
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>

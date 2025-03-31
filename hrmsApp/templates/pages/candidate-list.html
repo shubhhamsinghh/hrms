@@ -1,0 +1,72 @@
+{% extends 'layouts/base.html' %}
+{% block title %} Candidate Form {% endblock title %}
+{% block content %}
+<div class="content-wrapper">
+    <section class="content-header">
+        <h1>
+            Candidates Listing
+        </h1>
+        <ol class="breadcrumb">
+            <li>
+                <a href="{% url 'dashboard' %}"><i class="fa fa-dashboard"></i> Home</a>
+            </li>
+            <li>Candidates Listing</li>
+        </ol>
+    </section>
+    <section class="content">
+        <div class="row">
+            <!--<div class="col-md-1"></div>  -->
+            <div class="col-md-12">
+           
+                <!-- Horizontal Form -->
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <!--<h3 class="box-title"></h3>-->
+                    </div>
+                    <!-- /.box-header -->
+                   
+                        <div class="box-body">
+                            <table id="can_table" class="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Interview Code</th>
+                                        <th>Name</th>
+                                        <th>Mobile No.</th>
+                                        <th>Email ID</th>
+                                        <th>Address</th> 
+                                        <th>Created At</th>
+                                        <th>
+                                            <center>Action</center>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for d in data %}
+                                    <tr>
+                                        <td>{{ forloop.counter }}</td>
+                                        <td>{{d.token}}</td>
+                                        <td>{{d.name}}</td>
+                                        <td>{{d.mobile}}</td>
+                                        <td>{{d.email}}</td>
+                                        <td>{{d.address}}</td>
+                                        <td>{{d.int_date}}</td>
+                                        <td>
+                                            <center>
+                                                <a class="btn btn-primary" href="">View</a>
+                                                <a class="btn btn-warning" href="{% url 'candidate_edit' token=d.token %}">Edit</a>
+                                            </center>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                </div>
+            </div>
+            <!--<div class="col-md-1"></div>    -->
+        </div>
+    </section>
+</div>
+
+{% endblock content %}

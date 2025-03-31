@@ -1,0 +1,579 @@
+{% extends 'layouts/base.html' %}
+{% block title %} Candidate Form {% endblock title %}
+{% block content %}
+{% load custom_tags %}
+{% now "Y" as current_year %}
+<style>
+    .dis-none {
+        display: none;
+    }
+
+    .dis-block {
+        display: block;
+    }
+</style>
+
+<div class="content-wrapper">
+    <section class="content-header">
+        <h1>
+            Interview Application
+        </h1>
+        <ol class="breadcrumb">
+            <li>
+                <a href="{% url 'dashboard' %}"><i class="fa fa-dashboard"></i> Home</a>
+            </li>
+            <li>Interview Application</li>
+        </ol>
+    </section>
+    <section class="content">
+        <div class="row">
+            <!--<div class="col-md-1"></div>  -->
+            <div class="col-md-12">
+                {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert alert-success">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                <!-- Horizontal Form -->
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <!--<h3 class="box-title"></h3>-->
+                    </div>
+                    <!-- /.box-header -->
+                    <!-- form start -->
+                    <form autocomplete="off" enctype="multipart/form-data" method="POST" files="true"
+                        action="">
+                        {% csrf_token %}
+                        <div class="box-body">
+                            <p><b><u>Initial information</u></b></p>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="department">Department<span style="color: red;">*</span> </label>
+                                        <select class="form-control" name="department_id" id="department" required>
+                                            <option value="">-- Select Department --</option>
+                                            {% for dept in departments %}
+                                            <option value="{{dept.id}}" {% if candidate.dept_id.id == dept.id %} selected {% endif %}>{{dept.dept_name}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="position">Job Role<span style="color: red;">*</span></label>
+                                        <select class="form-control" name="apply_for" id="position" required>
+                                            <option value="">-- Select Job Role --</option>
+                                            {% for job in jobrole %}
+                                            <option value="{{job.id}}" {% if candidate.apply_for.id == job.id %} selected {% endif %}>{{job.name}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="interview_date">Date<span style="color: red;">*</span></label>
+                                        <input type="date" class="form-control" placeholder="DD | MM | YYYY"
+                                            id="dateInput" name="int_date" required value="{{candidate.int_date}}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="referral_by">Referred<span style="color: red;">*</span></label>
+                                        <select class="form-control" name="referral_by" id="referral_by" required>
+                                            <option value="">-- Select --</option>
+                                            <option value="Employee" {% if candidate.referred == "Employee" %} selected {% endif %}>Employee</option>
+                                            <option value="Portal" {% if candidate.referred == "Portal" %} selected {% endif %}>Portal</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-2 ref_emp_name {% if candidate.referred == 'Portal' %} dis-none {% endif %}">
+                                    <div class="form-group">
+                                        <label for="employee_name" class="ref_emp_name">Employee Name<span
+                                                style="color: red;">*</span></label>
+                                        <input type="text" class="form-control" value="" name="ref_emp_name"
+                                            id="ref_emp_name" placeholder="Employee Name" />
+                                    </div>
+                                </div>
+                                <div class="col-md-2 ref_emp_id {% if candidate.referred == 'Portal' %} dis-none {% endif %}">
+                                    <div class="form-group">
+                                        <label for="employee_id" class="ref_emp_id ">Employee ID<span
+                                                style="color: red;">*</span></label>
+                                        <input type="text" class="form-control" value="" name="ref_emp_id"
+                                            id="ref_emp_id" placeholder="Employee ID" />
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-4 source {% if candidate.referred == 'Employee' %} dis-none {% endif %}">
+                                    <div class="form-group">
+                                        <label for="source">Source<span style="color: red;">*</span> </label>
+                                        <select class="form-control" name="source" id="source">
+                                            <option value="">-- Select Source --</option>
+                                            <option value="Naukri" {% if candidate.source == 'Naukri' %} selected {% endif %}>Naukri</option>
+                                            <option value="LinkedIn" {% if candidate.source  == 'LinkedIn' %} selected {% endif %}>LinkedIn</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="location">Location<span style="color: red;">*</span> </label>
+                                        <input type="text" class="form-control" name="location" id="location" required value="{{candidate.location}}"
+                                            placeholder="Location">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="location">Shift</label>
+                                        <br>
+                                        <div class="col-md-4"><input type="radio" id="wfh" name="shift" value="WFH"
+                                            {% if candidate.shift  == 'WFH' %} checked {% endif %}> <label for="wfh"> WFH</label> </div>
+                                        <div class="col-md-4"><input type="radio" id="wfo" name="shift" value="WFO" {% if candidate.shift  == 'WFO' %} checked {% endif %}>
+                                            <label for="wfo"> WFO </label> </div>
+                                        <div class="col-md-4"><input type="radio" id="hybrid" name="shift"
+                                                value="Hybrid" {% if candidate.shift  == 'Hybrid' %} checked {% endif %}> <label for="hybrid"> Hybrid </label> </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="location">Rotational Shift</label>
+                                        <br>
+                                        <div class="col-md-6"><input type="radio" id="yes" name="r_shift" value="Yes"
+                                            {% if candidate.r_shift  == 'Yes' %} checked {% endif %}> <label for="yes"> Yes</label> </div>
+                                        <div class="col-md-6"><input type="radio" id="no" name="r_shift" value="No" {% if candidate.r_shift  == 'No' %} checked {% endif %}>
+                                            <label for="no"> No </label> </div>
+
+                                    </div>
+                                </div>
+
+                            </div>
+                        
+                            <hr>
+
+                            <p><b><u>Personal Information</u></b></p>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="name">Name<span style="color: red;">*</span> </label>
+                                        <input type="text" class="form-control" name="name" id="name" placeholder="Name"
+                                            required value="{{candidate.name}}" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="father_name">Father's Name</label>
+                                        <input type="text" class="form-control" name="father_name" id="father_name"
+                                            placeholder="Father's Name" value="{{candidate.father_name}}" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="phone_no">Mobile No</label>
+                                        <input type="text" class="form-control" name="phone_no" id="phone_no"
+                                            onkeypress="return isNumberKey(event)" placeholder="Mobile No." value="{{candidate.mobile}}" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="email">Email ID</label>
+                                        <input type="email" class="form-control" name="email" id="email"
+                                            placeholder="Email ID" value="{{candidate.email}}"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="dob">DOB</label>
+                                        <input type="date" class="form-control" placeholder="DD | MM | YYYY" id="dob"
+                                            name="dob" value="{{candidate.dob}}">
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label for="age">Age</label>
+                                        <input type="text" class="form-control" name="age" id="age" placeholder="Age"
+                                            readonly />
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Gender {{candidate.gender}}</label>
+                                        <br>
+                                        <div class="col-md-4"><input type="radio" id="male" name="gender" value="Male" {% if candidate.gender  == 'Male' %} checked {% endif %}
+                                                > <label for="male"> Male </label> </div>
+                                        <div class="col-md-4"><input type="radio" id="female" name="gender" {% if candidate.gender == 'Female' %} checked {% endif %}
+                                                value="Female"> <label for="female"> Female </label> </div>
+                                        <div class="col-md-4"><input type="radio" id="others" name="gender" {% if candidate.gender and candidate.gender != 'Male' and candidate.gender != 'Female' %} checked {% endif %}
+                                                value="Others"> <label for="others"> Others </label> </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-2 oth_gender  {% if candidate.gender and candidate.gender != 'Male' and candidate.gender != 'Female' %} 
+                                dis-block {% else %} dis-none {% endif %}">
+                                    <div class="form-group">
+                                        <label for="other" style="opacity: 0 !important;">Other</label>
+                                        <input type="text" class="form-control" name="oth_gender" id="other"
+                                            placeholder="other" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="address">Permanent Address</label>
+                                        <textarea class="form-control" rows="3" name="address" id="address">{{candidate.address}}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <p><b>Academic Information</b></p>
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <input type="checkbox" id="highschool" name="highsch_lvl" {% if education.high_school %} checked {% endif %}>
+                                    <label for="highschool">Secondary School (10th)</label>
+                                </div>
+                                <div class="col-md-2">
+                                    <select class="form-control" name="high_school" {% if education.high_school %} {% else %} disabled {% endif %}>
+                                        <option value="">-- Select Year --</option>
+                                        {% for i in 1990|range_filter:current_year %}
+                                        <option value="{{i}}" {% if education.high_school == i %} selected {% endif %}>{{i}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <input type="checkbox" id="intermediate" name="intermediate_lvl">
+                                    <label for="intermediate">Higher Secondary (12th)</label>
+                                </div>
+                                <div class="col-md-2">
+                                    <select class="form-control" name="intermediate" id="intermediate_year" disabled>
+                                        <option value="">-- Select Year --</option>
+                                        {% for i in 1990|range_filter:current_year %}
+                                        <option value="{{i}}">{{i}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <input type="checkbox" id="diploma" name="diploma_lvl">
+                                    <label for="diploma">Diploma</label>
+                                </div>
+                                <div class="col-md-2">
+                                    <select class="form-control" name="diploma" id="diploma_year" disabled>
+                                        <option value="">-- Select Year --</option>
+                                        {% for i in 1990|range_filter:current_year %}
+                                        <option value="{{ i }}">{{ i }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <input type="checkbox" id="graduation" name="graduation_lvl">
+                                    <label for="graduation">Graduation</label>
+                                </div>
+                                <div class="col-md-2">
+                                    <select class="form-control" name="graduation" id="graduation_year" disabled>
+                                        <option value="">-- Select Year --</option>
+                                        {% for i in 1990|range_filter:current_year %}
+                                        <option value="{{ i }}">{{ i }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <input type="checkbox" id="pg" name="postgrad_lvl">
+                                    <label for="pg">Post Graduation</label>
+                                </div>
+                                <div class="col-md-2">
+                                    <select class="form-control" name="pg" id="pg_year" disabled>
+                                        <option value="">-- Select Year --</option>
+                                        <option value="1990">1990</option>
+                                        
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <input type="checkbox" id="master_lvl" name="master_lvl">
+                                    <label for="master_lvl">Doctorate</label>
+                                </div>
+                                <div class="col-md-2">
+                                    <select class="form-control" name="master" id="master" disabled>
+                                        <option value="">-- Select Year --</option>
+                                        <option value="1990">1990</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <hr>
+                            <p><b><i>Employment & Salary Information</i></b></p>
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <input type="radio" id="fresher" name="exp_level" value="Fresher" checked>
+                                    <label for="fresher">Fresher</label>
+                                </div>
+                                <div class="col-md-2">
+                                    <input type="radio" id="experienced" name="exp_level" value="Experienced">
+                                    <label for="experienced">Experienced</label>
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="col-md-4">
+                                        <label for="exp_year">Total Work Experience</label>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <select class="form-control" name="exp_year" id="exp_year" required>
+                                            {% for i in 1|range_filter:20 %}
+                                            <option value="{{i}}">{{i}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label for="exp_year">Year</label>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <select class="form-control" name="exp_month" id="exp_moth" required>
+                                            <option value="0">0</option>
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5">5</option>
+                                            <option value="6">6</option>
+                                            <option value="7">7</option>
+                                            <option value="8">8</option>
+                                            <option value="9">9</option>
+                                            <option value="10">10</option>
+                                            <option value="11">11</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label for="exp_moth">Month</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="current_salary">Current Salary (monthly in hand) </label>
+                                        <input type="text" class="form-control" name="curr_month_salary"
+                                            id="current_salary" placeholder="Current Salary" />
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="current_ctc">Current CTC (yearly in hand) </label>
+                                        <input type="text" class="form-control" name="curr_year_salary" id="current_ctc"
+                                            placeholder="Current CTC" />
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="expected_salary">Expected Salary (monthly in hand) </label>
+                                        <input type="text" class="form-control" name="expec_month_salary"
+                                            id="expected_salary" placeholder="Expected Salary" />
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="notice_period">Notice Period</label>
+                                        <select class="form-control" name="notice_period" id="notice_period">
+                                            <option value="0 Days">0 Days</option>
+                                            <option value="15 Days">15 Days</option>
+                                            <option value="30 Days">30 Days</option>
+                                            <option value="45 Days">45 Days</option>
+                                            <option value="60 Days">60 Days</option>
+                                            <option value="90 Days">90 Days</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="attach_file">
+                                        <label for="resume">Upload Resume</label>
+                                        <div class="file-box-fix">
+                                            <input type="file" class="form-control" name="resume" id="resume">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="attach_file">
+                                        <label for="portfolio">Portfolio</label>
+                                        <div class="file-box-fix">
+                                            <input type="file" class="form-control" name="portfolio" id="portfolio">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="links">Additional Portfolio Links </label>
+                                        <input type="text" class="form-control" name="links" id="links"
+                                            placeholder="Additional Portfolio Links" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.box-body -->
+                        <div class="box-footer">
+                            <button type="reset" class="btn btn-default pull-left btn-flat"><i class="fa fa-times"
+                                    style="width: 20px;"></i>Cancel</button>
+
+                            <button type="submit" class="btn btn-info pull-right btn-flat">Submit<i class="fa fa-hdd-o"
+                                    style="width: 20px;"></i></button>
+
+                            <!--data-toggle="modal" data-target="#encalldisposition"-->
+                        </div>
+                        <!-- /.box-footer -->
+                    </form>
+                </div>
+            </div>
+            <!--<div class="col-md-1"></div>    -->
+        </div>
+    </section>
+</div>
+
+{% endblock content %}
+
+{% block script %}
+<script>
+    $(document).ready(function() {
+       let today = new Date().toISOString().split('T')[0]; 
+       let $dateInput = $("#dateInput");
+       $dateInput.attr("min", today).val(today);
+       $dateInput.on("click", function() {
+           this.showPicker();
+       });
+       let $dobInput = $("#dob");
+       $dobInput.attr("max", today);
+       $dobInput.on("click", function() {
+           this.showPicker();
+       });
+   });
+   
+   $('select[name="referral_by"]').change(function() {
+   var selectedrefer = $(this).val();
+   if (selectedrefer !== "Employee") {
+       $('.source').addClass('dis-block').removeClass('dis-none');
+       $('input[name="source"]').attr('required', true);
+       $('.ref_emp_name').addClass('dis-none').removeClass('dis-block');
+       $('.ref_emp_id').addClass('dis-none').removeClass('dis-block');
+       $('input[name="ref_emp_name"]').addClass('dis-none').removeClass('dis-block').removeAttr('required').val('');
+       $('input[name="ref_emp_id"]').addClass('dis-none').removeClass('dis-block').removeAttr('required').val('');
+   } else {
+       $('.source').addClass('dis-none').removeClass('dis-block');
+       $('input[name="source"]').removeAttr('required').val('');
+       $('.ref_emp_name').addClass('dis-block').removeClass('dis-none');
+       $('input[name="ref_emp_name"]').addClass('dis-block').removeClass('dis-none').attr('required',true);
+       $('.ref_emp_id').addClass('dis-block').removeClass('dis-none');
+       $('input[name="ref_emp_id"]').addClass('dis-block').removeClass('dis-none').attr('required',true);
+   }
+   });
+   $("#dob").on("change", function() {
+       let dob = $(this).val();
+       if (dob) {
+           let today = new Date();
+           let birthDate = new Date(dob);
+           let age = today.getFullYear() - birthDate.getFullYear();
+           let monthDiff = today.getMonth() - birthDate.getMonth();
+           let dayDiff = today.getDate() - birthDate.getDate();
+
+           if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+               age--;
+           }
+
+           $("#age").val(age+' Year');
+       } else {
+           $("#age").val('');
+       }
+   });
+   $('input[name="gender"]').change(function() {
+   var selectedGender = $('input[name="gender"]:checked').val();
+   if (selectedGender !== "Male" && selectedGender !== "Female") {
+       $('.oth_gender').addClass('dis-block').removeClass('dis-none');
+       $('input[name="oth_gender"]').attr('required', true);
+   } else {
+       $('input[name="oth_gender"]').val('').removeAttr('required');
+       $('.oth_gender').removeClass('dis-block').addClass('dis-none');
+   }
+   });
+   
+   $('#highschool').change(function () {
+       if ($(this).is(':checked')) {
+           $('select[name="high_school"]').attr('required', true);
+           $('select[name="high_school"]').prop('disabled', false);
+       } else {
+           $('select[name="high_school"]').removeAttr('required');
+           $('select[name="high_school"]').prop('disabled', true).val('');
+       }
+   });
+   
+   $('#intermediate').change(function () {
+       if ($(this).is(':checked')) {
+           $('select[name="intermediate"]').attr('required', true);
+           $('select[name="intermediate"]').prop('disabled', false);
+       } else {
+           $('select[name="intermediate"]').removeAttr('required');
+           $('select[name="intermediate"]').prop('disabled', true).val('');
+       }
+   });
+   
+   $('#diploma').change(function () {
+       if ($(this).is(':checked')) {
+           $('select[name="diploma"]').attr('required', true);
+           $('select[name="diploma"]').prop('disabled', false);
+       } else {
+           $('select[name="diploma"]').removeAttr('required');
+           $('select[name="diploma"]').prop('disabled', true).val('');
+       }
+   });
+   $('#graduation').change(function () {
+       if ($(this).is(':checked')) {
+           $('select[name="graduation"]').attr('required', true);
+           $('select[name="graduation"]').prop('disabled', false);
+       } else {
+           $('select[name="graduation"]').removeAttr('required');
+           $('select[name="graduation"]').prop('disabled', true).val('');
+       }
+   });
+   $('#pg').change(function () {
+       if ($(this).is(':checked')) {
+           $('select[name="pg"]').attr('required', true);
+           $('select[name="pg"]').prop('disabled', false);
+       } else {
+           $('select[name="pg"]').removeAttr('required');
+           $('select[name="pg"]').prop('disabled', true).val('');
+       }
+   });
+   
+   $('#master_lvl').change(function () {
+       if ($(this).is(':checked')) {
+           $('select[name="master"]').attr('required', true);
+           $('select[name="master"]').prop('disabled', false);
+       } else {
+           $('select[name="master"]').removeAttr('required');
+           $('select[name="master"]').prop('disabled', true).val('');
+       }
+   });
+   
+    $('input[name="exp_level"]').change(function () {
+       if ($(this).val() == "Fresher") {
+           $('#exp_year').val('0');
+           $('#exp_moth').val('0');
+       }
+   });
+   
+   
+</script>
+{% endblock script %}
