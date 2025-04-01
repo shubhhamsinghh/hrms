@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import UserProfile, Department, JobRole, Candidate, Education, Experience
+from .models import UserProfile, Department, JobRole, Candidate, Education, Experience, Assign, Remark, ManagerRating
 
 class UserProfileAdmin(admin.ModelAdmin):
     list_display = ('user', 'designation')
@@ -32,3 +32,32 @@ class ExperienceAdmin(admin.ModelAdmin):
 
     def candidate_name(self, obj):
         return obj.candidate_id.name
+    
+
+@admin.register(Assign)
+class AssignAdmin(admin.ModelAdmin):
+    list_display = ['candidate_name','from_name','to_name']
+
+    def candidate_name(self, obj):
+        return obj.candidate.name
+    
+    def from_name(self, obj):
+        return obj.assign_from.name
+    
+    def to_name(self, obj):
+        return obj.assign_to.name
+    
+@admin.register(Remark)
+class RemarkAdmin(admin.ModelAdmin):
+    list_display = ['candidate_name','re_status','remark']
+
+    def candidate_name(self, obj):
+        return obj.candidate.name
+    
+@admin.register(ManagerRating)
+class RatingAdmin(admin.ModelAdmin):
+    list_display = ['candidate_name','remark','work_exe']
+
+    def candidate_name(self, obj):
+        return obj.remark.candidate.name
+    

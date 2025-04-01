@@ -191,8 +191,23 @@ def candidate_update_view(request,token):
 
 
 def candidate_listing(request):
-    data = Candidate.objects.all()
+    data = Candidate.objects.all().order_by('-id')
     return render(request, 'pages/candidate-list.html',{'data':data})
+
+def candidate_info_view(request, token):
+     
+    candidate = get_object_or_404(
+        Candidate.objects.prefetch_related('ed_candidate', 'exp_candidate'),
+        token=token
+    )
+    education = candidate.ed_candidate.get() 
+    experience = candidate.exp_candidate.get()
+
+    return render(request, 'pages/candidate-info.html',{
+        'candidate': candidate,
+        'education': education,
+        'experience': experience
+    })
 
 def logout_view(request):
     logout(request)

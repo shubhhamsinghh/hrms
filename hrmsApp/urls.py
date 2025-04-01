@@ -11,5 +11,6 @@ urlpatterns = [
     path('candidate-edit/<str:token>/',views.candidate_edit_view,name="candidate_edit"),
     path('candidate-update/<str:token>/',views.candidate_update_view,name="candidate_update"),
     path('candidate-listing/',views.candidate_listing,name="candidate_listing"),
+    path('candidate-info/<str:token>',views.candidate_info_view,name="candidate_info_view"),
     path('logout/',views.logout_view,name="logout"),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

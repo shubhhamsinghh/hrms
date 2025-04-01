@@ -52,7 +52,7 @@ class Candidate(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return str(self.id)
+        return f"{str(self.id)} {self.name}"
     
 class Education(models.Model):
     candidate_id=models.ForeignKey(Candidate,on_delete=models.CASCADE,related_name='ed_candidate')
@@ -95,6 +95,38 @@ class Experience(models.Model):
     def __str__(self):
         return f"{self.candidate_id}, {self.exp_level}"
     
+class Assign(models.Model):
+    candidate=models.ForeignKey(Candidate,on_delete=models.CASCADE,related_name='assign_candidate')
+    assign_from=models.ForeignKey(User,on_delete=models.CASCADE,related_name="assigned_from")
+    assign_to=models.ForeignKey(User,on_delete=models.CASCADE,related_name="assigned_to")
+    int_mode=models.CharField(max_length=30)
+    int_date=models.DateField(null=True,blank=True)
+    int_time=models.CharField(max_length=30,null=True,blank=True)
+    int_round=models.IntegerField(default=0,help_text="0=>Assign to HR | 1=>HR Remarked | 2=>Assign to TL | 3=> TL Remarked | 4=>Assign to Manager | 5=>Manager Remarked | 6=>Final Remarked | 7=>BGB Remarked")
 
+    def __str__(self):
+        return f"{self.candidate.name} {self.assign_from} {self.assign_to}"
+    
+class Remark(models.Model):
+    candidate=models.ForeignKey(Candidate,on_delete=models.CASCADE,related_name='remark_to_cand')
+    assigned_id=models.ForeignKey(Assign,on_delete=models.CASCADE,related_name='assign_candidate')
+    rating=models.CharField(max_length=30)
+    re_status=models.CharField(max_length=70)
+    remark=models.TextField(null=True)
 
+    def __str__(self):
+        return f"{self.candidate} {self.assigned_id}"
+    
+
+class ManagerRating(models.Model):
+    remark=models.ForeignKey(Remark,on_delete=models.CASCADE,related_name="remark_info")
+    work_exe=models.IntegerField()
+    applicable_skl=models.IntegerField()
+    appearance=models.IntegerField()
+    attiude=models.IntegerField()
+    education=models.IntegerField()
+    enthusiasm=models.IntegerField()
+
+    def __str__(self):
+        return f"{self.remark}"
 

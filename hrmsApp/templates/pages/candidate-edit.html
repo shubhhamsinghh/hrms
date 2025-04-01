@@ -70,7 +70,7 @@
                                     <div class="form-group">
                                         <label for="interview_date">Date<span style="color: red;">*</span></label>
                                         <input type="date" class="form-control" placeholder="DD | MM | YYYY"
-                                            id="dateInput" name="int_date" required value="{{candidate.int_date}}">
+                                            id="dateInput" name="int_date" required value="{{ candidate.int_date|format_date }}">
                                     </div>
                                 </div>
                             </div>
@@ -327,7 +327,7 @@
                                     </div>
                                     <div class="col-md-2">
                                         <select class="form-control" name="exp_year" id="exp_year">
-                                            {% for i in 1|range_filter:20 %}
+                                            {% for i in 0|range_filter:20 %}
                                             <option value="{{i}}" {% if experience.exp_year|to_int == i %} selected {% endif %}>{{i}}</option>
                                             {% endfor %}
                                         </select>
@@ -390,7 +390,9 @@
                                         <label for="resume">Upload Resume</label>
                                         <div class="file-box-fix">
                                             <input type="file" class="form-control" name="resume" id="resume">
+                                            {% if experience.resume %}
                                             <a href="{{ experience.resume.url }}" target="_blank">View</a>
+                                            {% endif %}
                                         </div>
                                     </div>
                                 </div>
@@ -399,6 +401,9 @@
                                         <label for="portfolio">Portfolio</label>
                                         <div class="file-box-fix">
                                             <input type="file" class="form-control" name="portfolio" id="portfolio">
+                                            {% if experience.portfolio %}
+                                            <a href="{{ experience.portfolio.url }}" target="_blank">View</a>
+                                            {% endif %}
                                         </div>
                                     </div>
                                 </div>
@@ -440,7 +445,7 @@
     $(document).ready(function() {
        let today = new Date().toISOString().split('T')[0]; 
        let $dateInput = $("#dateInput");
-       $dateInput.attr("min", today).val(today);
+       $dateInput.attr("min", today).val();
        $dateInput.on("click", function() {
            this.showPicker();
        });

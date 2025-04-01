@@ -1,6 +1,7 @@
 {% extends 'layouts/base.html' %}
 {% block title %} Candidate Form {% endblock title %}
 {% block content %}
+{% load custom_tags %}
 <div class="content-wrapper">
     <section class="content-header">
         <h1>
@@ -41,7 +42,7 @@
                                         <th>Mobile No.</th>
                                         <th>Email ID</th>
                                         <th>Address</th> 
-                                        <th>Created At</th>
+                                        <th>Date</th>
                                         <th>
                                             <center>Action</center>
                                         </th>
@@ -55,11 +56,11 @@
                                         <td>{{d.name}}</td>
                                         <td>{{d.mobile}}</td>
                                         <td>{{d.email}}</td>
-                                        <td>{{d.address}}</td>
+                                        <td>{{d.address|default:''}}</td>
                                         <td>{{d.int_date}}</td>
                                         <td>
                                             <center>
-                                                <a class="btn btn-primary" href="">View</a>
+                                                <a class="btn btn-primary" href="{% url 'candidate_info_view' token=d.token %}">View</a>
                                                 <a class="btn btn-warning" href="{% url 'candidate_edit' token=d.token %}">Edit</a>
                                             </center>
                                         </td>

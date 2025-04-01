@@ -1,0 +1,44 @@
+{% extends 'layouts/base.html' %}
+{% block title %} Candidate Form {% endblock title %}
+{% block content %}
+{% load custom_tags %}
+<div class="content-wrapper">
+    <section class="content-header">
+        <h1>
+            Candidates information [{{candidate.token}}]
+        </h1>
+        <ol class="breadcrumb">
+            <li>
+                <a href="{% url 'dashboard' %}"><i class="fa fa-dashboard"></i> Home</a>
+            </li>
+            <li>Candidates information</li>
+        </ol>
+    </section>
+    <section class="content">
+        <div class="row">
+            <!--<div class="col-md-1"></div>  -->
+            <div class="col-md-12">
+                {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert alert-success">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                <!-- Horizontal Form -->
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title pull-right">
+                            <a href="javascript:void(0)" class="btn btn-flat btn-primary" data-toggle="modal" data-target="#assignHR">Assign to HR</a>
+                        </h3>
+                    </div>
+                    <!-- /.box-header -->
+                   
+                </div>
+            </div>
+            <!--<div class="col-md-1"></div>    -->
+        </div>
+    </section>
+</div>
+
+{% endblock content %}
