@@ -21,7 +21,7 @@ class AuthenticationMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        PUBLIC_PATHS = ['/login/', '/signup/']
+        PUBLIC_PATHS = ['/login/']
         ADMIN_PATH = '/admin/' 
 
         if (

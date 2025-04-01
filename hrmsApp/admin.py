@@ -42,10 +42,10 @@ class AssignAdmin(admin.ModelAdmin):
         return obj.candidate.name
     
     def from_name(self, obj):
-        return obj.assign_from.name
+        return obj.assign_from
     
     def to_name(self, obj):
-        return obj.assign_to.name
+        return obj.assign_to
     
 @admin.register(Remark)
 class RemarkAdmin(admin.ModelAdmin):

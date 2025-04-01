@@ -3,7 +3,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, logout
 from .middlewares import auth, guest
 from django.contrib.auth.models import User
-from .models import Department, Candidate, Education, Experience, JobRole
+from .models import Department, Candidate, Education, Experience, JobRole, Assign, Remark, ManagerRating
 from datetime import datetime
 from django.contrib import messages
 import secrets
@@ -24,7 +24,9 @@ def login_view(request):
 
 @auth
 def dashboard_view(request):
-    return render(request, 'pages/home.html')
+    a1 = Candidate.objects.count()
+    a2 = User.objects.count()
+    return render(request, 'pages/home.html',{'a1':a1, 'a2':a2})
 
 @auth
 def candidate_form_view(request):
@@ -202,12 +204,31 @@ def candidate_info_view(request, token):
     )
     education = candidate.ed_candidate.get() 
     experience = candidate.exp_candidate.get()
-
+    hr_users = User.objects.filter(userprofile__designation='hr',is_active=1)
+   
     return render(request, 'pages/candidate-info.html',{
         'candidate': candidate,
         'education': education,
-        'experience': experience
+        'experience': experience,
+        'hr_users': hr_users
     })
+
+def assign_to_view(request, token):
+    if request.POST:
+        candidate = Candidate.objects.get(token=token)
+        getMaxgetMaxassign = Assign.objects.order_by('-int_round').first()
+        assign = {}
+        assign['candidate'] = candidate
+        assign['assign_from'] = User.objects.get(id=request.user.id)
+        assign['assign_to'] = User.objects.get(id=request.POST.get('assign_to'))
+        assign['int_mode'] = request.POST.get('int_mode')
+        assign['int_date'] = request.POST.get('int_date')
+        assign['int_time'] = request.POST.get('int_time')
+        if getMaxgetMaxassign is not None:
+           assign['int_round'] = ++getMaxgetMaxassign.int_round
+        Assign.objects.create(**assign)
+        messages.success(request, "Candidate Assigned successfully!")
+        return redirect(request.META.get('HTTP_REFERER', 'fallback-url'))
 
 def logout_view(request):
     logout(request)

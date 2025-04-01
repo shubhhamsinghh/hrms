@@ -2,6 +2,11 @@
 {% block title %} Candidate Form {% endblock title %}
 {% block content %}
 {% load custom_tags %}
+<style>
+    label{
+        display: inline !important;
+    }
+</style>
 <div class="content-wrapper">
     <section class="content-header">
         <h1>
@@ -19,26 +24,508 @@
             <!--<div class="col-md-1"></div>  -->
             <div class="col-md-12">
                 {% if messages %}
-                    {% for message in messages %}
-                    <div class="alert alert-success">
-                            {{ message }}
-                        </div>
-                    {% endfor %}
+                {% for message in messages %}
+                <div class="alert alert-success">
+                    {{ message }}
+                </div>
+                {% endfor %}
                 {% endif %}
                 <!-- Horizontal Form -->
                 <div class="box box-primary">
                     <div class="box-header with-border">
                         <h3 class="box-title pull-right">
-                            <a href="javascript:void(0)" class="btn btn-flat btn-primary" data-toggle="modal" data-target="#assignHR">Assign to HR</a>
+                            <a href="javascript:void(0)" class="btn btn-flat btn-primary" data-toggle="modal"
+                                data-target="#assignHR">Assign to HR</a>
                         </h3>
                     </div>
                     <!-- /.box-header -->
-                   
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs" id="myTab">
+                            <li class="active"><a href="#initial_info" data-toggle="tab" aria-expanded="false"><b><i
+                                            class="fa fa-calendar text-blue" style="width:15px"></i> Initial information
+                                    </b></a></li>
+                            <li><a href="#assigned" data-toggle="tab" aria-expanded="true"><b><i
+                                            class="fa fa-birthday-cake text-blue" style="width:15px"></i> Assigned
+                                    </b></a></li>
+                            <li><a href="#bgv" data-toggle="tab"><b><i class="fa fa-briefcase text-blue"
+                                            style="width:15px"></i> BGV </b></a></li>
+                            <li><a href="#documents" data-toggle="tab"><b><i class="fa fa-briefcase text-blue"
+                                            style="width:15px"></i> Documents </b></a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane mail-scroll active" id="initial_info">
+                                <p style="color:red"><u>Initial information</u></p>
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <div class="form-group"><label><strong>Department :</strong> </label></div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <p>{{candidate.dept_id.dept_name}}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <div class="form-group"><label><strong>Job Role :</strong> </label></div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <p>{{candidate.apply_for.name}}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <div class="form-group"><label><strong>Referred :</strong> </label></div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <p>{{candidate.referred}}</p>
+                                        </div>
+                                    </div>
+
+                                    {% if candidate.emp_name %}
+                                    <div class="col-md-2">
+                                        <div class="form-group"><label><strong>Employee Name :</strong> </label></div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <p>candidate.emp_name</p>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                    {% if candidate.emp_id %}
+                                    <div class="col-md-2">
+                                        <div class="form-group"><label><strong>Employee ID :</strong> </label></div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <p>{{candidate.emp_id}}</p>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                    {% if candidate.source %}
+                                    <div class="col-md-2">
+                                        <div class="form-group"><label><strong>Source :</strong> </label></div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <p>{{candidate.source}}</p>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                    <div class="col-md-2">
+                                        <div class="form-group"><label><strong>Location :</strong> </label></div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <p>{{candidate.location}}</p>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-md-2">
+                                        <div class="form-group"><label><strong>Shift :</strong> </label></div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <p>{{candidate.shift}}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <div class="form-group"><label><strong>Rotational Shift :</strong> </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <p>{{candidate.r_shift}}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+
+                                <p style="color:red"><u>Personal Information</u></p>
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <div class="form-group"><label><strong>Name :</strong> </label></div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <p>{{candidate.name}}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <div class="form-group"><label><strong>Father's Name :</strong> </label></div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <p>{{candidate.father_name}}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <div class="form-group"><label><strong>Mobile No :</strong> </label></div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <p>{{candidate.mobile}}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <div class="form-group"><label><strong>Email ID :</strong> </label></div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <p>{{candidate.email}}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-1">
+                                        <div class="form-group"><label><strong>DOB :</strong> </label></div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <p>{{candidate.dob}}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <div class="form-group"><label><strong>Age :</strong> </label></div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <p>{{ candidate.dob|calculate_age }} year</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <div class="form-group"><label><strong>Gender :</strong> </label></div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <p>{{candidate.gender}}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <div class="form-group"><label><strong>Address :</strong> </label></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <p>{{candidate.address}}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+
+                                <p style="color:red"><u>Academic Information</u></p>
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <div class="form-group"><label><strong>Secondary School (10th) :</strong>
+                                            </label></div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <p>{{education.high_school|default:"-"}}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <div class="form-group"><label><strong>Higher Secondary (12th) :</strong>
+                                            </label></div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <p>{{education.intermediate|default:"-"}}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <div class="form-group"><label><strong>Diploma :</strong> </label></div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <p>{{education.diploma|default:"-"}}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <div class="form-group"><label><strong>Graduation :</strong> </label></div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <p>{{education.graduation|default:"-"}}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <div class="form-group"><label><strong>Post Graduation :</strong> </label></div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <p>{{education.pg|default:"-"}}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <div class="form-group"><label><strong>Doctorate :</strong> </label></div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <p>{{education.master|default:"-"}}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+
+                                <p style="color:red"><u>Employment &amp; Salary Information</u></p>
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <div class="form-group"><label><strong>Experience Level:</strong> </label></div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <p>{{experience.exp_level|default:'-'}}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <div class="form-group"><label><strong>Total Work Experience :</strong> </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <p>{{experience.exp_year|default:'-'}} year</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <p>{{experience.exp_month|default:'-'}} month</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <div class="form-group"><label><strong>Current Salary (Monthly) :</strong>
+                                            </label></div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <p>{{experience.curr_month_salary|default:'-'}}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <div class="form-group"><label><strong>Current CTC (Yearly) :</strong> </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <p>{{experience.curr_year_salary|default:'-'}}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <div class="form-group"><label><strong>Expected Salary (Monthly) :</strong>
+                                            </label></div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <p>{{experience.expec_month_salary|default:'-'}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group"><label><strong>Notice Period :</strong>
+                                            </label></div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <p>{{experience.notice_period|default:'-'}}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <div class="form-group"><label><strong> Resume :</strong> </label></div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <p>{% if experience.resume %} <a href="{{experience.resume.url}}">View</a> {% endif %}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <div class="form-group"><label><strong> Porfolio :</strong> </label></div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <p>{% if experience.portfolio %} <a href="{{experience.portfolio.url}}">View</a> {% endif %}</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group"><label><strong>Additional Portfolio Links :</strong>
+                                            </label></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <p>{{experience.links|default:'-'}}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane mail-scroll" id="assigned">
+                            </div>
+                            <div class="tab-pane mail-scroll" id="bgv">
+                            </div>
+                            <div class="tab-pane mail-scroll" id="documents">
+                            </div>
+                        </div>
+                        <!--</div>-->
+                    </div>
                 </div>
             </div>
             <!--<div class="col-md-1"></div>    -->
         </div>
     </section>
+</div>
+
+<div class="modal fade" id="assignHR" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h4 class="modal-title">Assign To HR</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <!-- Assinged Form Start -->
+                    <form method="post" action="{% url 'assign_to' token=candidate.token %}">
+                        {% csrf_token %}
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <div style="width: 48%;">
+                                        <label for="recruiter">Assign To <span style="color: red;">*</span></label>
+                                        <select class="form-control" name="assign_to" id="recruiter" required>
+                                            <option value="">-- Select Assign To --</option>
+                                            {% for hr in hr_users %}
+                                            <option value="{{hr.id}}">{{hr}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div style="width: 48%;">
+                                        <label for="recruiter">Interview Mode <span style="color: red;">*</span></label>
+                                        <br>
+                                        <input type="radio" id="telephonic" name="int_mode" value="Telephonic" checked>
+                                        <label for="telephonic"> Telephonic</label>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" id="virtual"
+                                            name="int_mode" value="Virtual"> <label for="virtual"> Virtual </label>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" id="f2f"
+                                            name="int_mode" value="F2F"> <label for="f2f"> F2F</label>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <div style="width: 48%;">
+                                        <label for="int_date">Date <span style="color: red;">*</span></label>
+                                        <input type="date" class="form-control" name="int_date" id="int_date" required>
+                                    </div>
+
+                                    <div style="width: 48%;">
+                                        <label for="location">Timing</label>
+                                        <input type="time" class="form-control" name="int_time" id="int_time">
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-success btn-flat pull-right"><i class="fa fa-hdd-o"
+                                    style="width: 20px;"></i> Save</button>
+
+                        </div>
+                    </form>
+                    <!-- Assinged Form End -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="finalRemark" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h4 class="modal-title">Final Remark</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <!-- Assinged Form Start -->
+                    <form method="post" action="https://advointernal1.com/hrms/admin/final-remark/4KU3CTBM">
+                        <input type="hidden" name="_token" value="PFp2qYJTct6eQwUGjpJWzbxxGdYwu6BjM0MPmgws"
+                            autocomplete="off">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <div style="width: 60%;">
+                                        <label for="int">Interested <span style="color: red;">*</span></label>
+                                        <br>
+                                        <input type="radio" id="yes" name="interested" value="Yes" checked> <label
+                                            for="yes"> Yes </label>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+                                            type="radio" id="no" name="interested" value="No"> <label for="no"> No
+                                        </label>
+                                    </div>
+
+                                    <div style="width: 39%;">
+                                        <label for="location">Status <span style="color: red;">*</span></label>
+                                        <br>
+                                        <input type="radio" id="fi_selected" name="fi_status" value="Selected" checked>
+                                        <label for="fi_selected"> Selected</label>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+                                            type="radio" id="fi_rejected" name="fi_status" value="Rejected"> <label
+                                            for="fi_rejected"> Rejected </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="designation"> Designation </label>
+                                <input type="text" class="form-control" name="designation">
+                            </div>
+
+                            <div class="form-group">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <div style="width: 49%;">
+                                        <label for="location">Salary</label>
+                                        <input type="text" class="form-control" name="salary">
+                                    </div>
+                                    &nbsp;&nbsp;&nbsp;
+                                    <div style="width: 49%;">
+                                        <label for="location">Doj</label>
+                                        <input type="date" class="form-control" name="Doj">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="remark">Remark <span style="color: red;">*</span></label>
+                                <textarea class="form-control" name="remark" rows="3" cloumn="30" required></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-success btn-flat pull-right"><i class="fa fa-hdd-o"
+                                    style="width: 20px;"></i> Save</button>
+
+                        </div>
+                    </form>
+                    <!-- Assinged Form End -->
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 {% endblock content %}

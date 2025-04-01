@@ -93,7 +93,7 @@ class Experience(models.Model):
     links=models.CharField(max_length=255,null=True,blank=True)
 
     def __str__(self):
-        return f"{self.candidate_id}, {self.exp_level}"
+        return f"{self.candidate_id.name}"
     
 class Assign(models.Model):
     candidate=models.ForeignKey(Candidate,on_delete=models.CASCADE,related_name='assign_candidate')
@@ -105,7 +105,7 @@ class Assign(models.Model):
     int_round=models.IntegerField(default=0,help_text="0=>Assign to HR | 1=>HR Remarked | 2=>Assign to TL | 3=> TL Remarked | 4=>Assign to Manager | 5=>Manager Remarked | 6=>Final Remarked | 7=>BGB Remarked")
 
     def __str__(self):
-        return f"{self.candidate.name} {self.assign_from} {self.assign_to}"
+        return f"{self.candidate.name}"
     
 class Remark(models.Model):
     candidate=models.ForeignKey(Candidate,on_delete=models.CASCADE,related_name='remark_to_cand')
@@ -115,7 +115,7 @@ class Remark(models.Model):
     remark=models.TextField(null=True)
 
     def __str__(self):
-        return f"{self.candidate} {self.assigned_id}"
+        return f"{self.candidate}"
     
 
 class ManagerRating(models.Model):

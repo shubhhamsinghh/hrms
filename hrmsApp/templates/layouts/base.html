@@ -187,7 +187,14 @@
     </script>
 {% block script %} {% endblock script %}
   
-   <!-- show action msg -->
+{% if messages %}
+ {% for message in messages %}
+ <script>
+    // toastr.{{ message.tags }}('{{ messages }}')
+ </script>
+
+  {% endfor %}
+ {% endif %}
   </body>
   
   </html>
