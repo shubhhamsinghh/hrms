@@ -72,6 +72,7 @@ def candidate_add_view(request):
            candidate['gender'] = request.POST.get('oth_gender')
        else:
            candidate['gender'] = request.POST.get('gender')
+       
 
        c_data = Candidate.objects.create(**candidate)
    
@@ -101,7 +102,7 @@ def candidate_add_view(request):
 
        Experience.objects.create(**exp)
        messages.success(request, "Candidate created successfully!")
-       return redirect(request.META.get('HTTP_REFERER', 'default_url'))
+       return redirect('candidate_listing')
     
 @auth
 def candidate_edit_view(request, token):
@@ -112,8 +113,8 @@ def candidate_edit_view(request, token):
         Candidate.objects.prefetch_related('ed_candidate', 'exp_candidate'),
         token=token
     )
-    education = candidate.ed_candidate.all() 
-    experience = candidate.exp_candidate.all()
+    education = candidate.ed_candidate.first() 
+    experience = candidate.exp_candidate.first()
     return render(request, 'pages/candidate-edit.html',{
         'departments':departments,
         'jobrole':jobrole,
@@ -123,9 +124,70 @@ def candidate_edit_view(request, token):
     })
 
 @auth
-def candidate_update_view(request):
+def candidate_update_view(request,token):
     if request.POST:
-        pass
+        candidate = Candidate.objects.get(token=token)
+
+        candidate.dept_id = Department.objects.get(id=request.POST.get('department_id'))
+        candidate.apply_for = JobRole.objects.get(id=request.POST.get('apply_for'))
+        candidate.int_date = datetime.strptime(request.POST.get('int_date'), "%Y-%m-%d").date() if request.POST.get('int_date') else None
+        candidate.referred = request.POST.get('referral_by')
+        candidate.location = request.POST.get('location')
+        candidate.shift = request.POST.get('shift')
+        candidate.r_shift = request.POST.get('r_shift')
+        candidate.name = request.POST.get('name')
+        candidate.father_name = request.POST.get('father_name')
+        candidate.mobile = request.POST.get('phone_no')
+        candidate.email = request.POST.get('email')
+        candidate.dob = datetime.strptime(request.POST.get('dob'), "%Y-%m-%d").date() if request.POST.get('dob') else None
+        candidate.address = request.POST.get('address')
+
+        if request.POST.get('referral_by') == "Employee":
+            candidate.emp_name = request.POST.get('ref_emp_name')
+            candidate.emp_id = request.POST.get('ref_emp_id')
+        else:
+            candidate.source = request.POST.get('source')
+
+        if request.POST.get('oth_gender'):
+            candidate.gender = request.POST.get('oth_gender')
+        else:
+            candidate.gender = request.POST.get('gender')
+        candidate.save()
+
+        education = Education.objects.get(candidate_id=candidate)
+        education.high_school = request.POST.get('high_school') if request.POST.get('high_school') else None
+        education.intermediate = request.POST.get('intermediate') if request.POST.get('intermediate') else None
+        education.diploma = request.POST.get('diploma') if request.POST.get('diploma') else None
+        education.graduation = request.POST.get('graduation') if request.POST.get('graduation') else None
+        education.pg = request.POST.get('pg') if request.POST.get('pg') else None
+        education.master = request.POST.get('master') if request.POST.get('master') else None
+        education.save()
+
+        experience = Experience.objects.get(candidate_id=candidate)
+        experience.exp_level = request.POST.get('exp_level') if request.POST.get('exp_level') else None
+        experience.exp_year = request.POST.get('exp_year') if request.POST.get('exp_year') else None
+        experience.exp_month = request.POST.get('exp_month') if request.POST.get('exp_month') else None
+        experience.curr_month_salary = request.POST.get('curr_month_salary') if request.POST.get('curr_month_salary') else None
+        experience.curr_year_salary = request.POST.get('curr_year_salary') if request.POST.get('curr_year_salary') else None
+        experience.expec_month_salary = request.POST.get('expec_month_salary') if request.POST.get('expec_month_salary') else None
+        experience.notice_period = request.POST.get('notice_period') if request.POST.get('notice_period') else None
+        experience.links = request.POST.get('links') if request.POST.get('links') else None
+
+        if experience.resume:
+            experience.resume.delete(save=False)
+
+        if request.FILES.get('resume'):
+            experience.resume = request.FILES.get('resume')
+
+        if experience.portfolio:
+            experience.portfolio.delete(save=False)
+
+        if request.FILES.get('portfolio'):
+            experience.portfolio = request.FILES.get('portfolio')
+
+        experience.save()
+        messages.success(request, "Candidate updates successfully!")
+        return redirect('candidate_listing')
 
 
 def candidate_listing(request):

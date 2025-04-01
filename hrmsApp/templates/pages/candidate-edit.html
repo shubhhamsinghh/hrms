@@ -29,13 +29,6 @@
         <div class="row">
             <!--<div class="col-md-1"></div>  -->
             <div class="col-md-12">
-                {% if messages %}
-                    {% for message in messages %}
-                    <div class="alert alert-success">
-                            {{ message }}
-                        </div>
-                    {% endfor %}
-                {% endif %}
                 <!-- Horizontal Form -->
                 <div class="box box-primary">
                     <div class="box-header with-border">
@@ -44,7 +37,7 @@
                     <!-- /.box-header -->
                     <!-- form start -->
                     <form autocomplete="off" enctype="multipart/form-data" method="POST" files="true"
-                        action="">
+                        action="{% url 'candidate_update' token=candidate.token %}">
                         {% csrf_token %}
                         <div class="box-body">
                             <p><b><u>Initial information</u></b></p>
@@ -197,14 +190,14 @@
                                     <div class="form-group">
                                         <label for="dob">DOB</label>
                                         <input type="date" class="form-control" placeholder="DD | MM | YYYY" id="dob"
-                                            name="dob" value="{{candidate.dob}}">
+                                            name="dob" value="{{ candidate.dob|format_date }}">
                                     </div>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label for="age">Age</label>
                                         <input type="text" class="form-control" name="age" id="age" placeholder="Age"
-                                            readonly />
+                                            readonly value="{{ candidate.dob|calculate_age }} year"/>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
@@ -225,7 +218,7 @@
                                     <div class="form-group">
                                         <label for="other" style="opacity: 0 !important;">Other</label>
                                         <input type="text" class="form-control" name="oth_gender" id="other"
-                                            placeholder="other" />
+                                            placeholder="other" value="{% if candidate.gender and candidate.gender != 'Male' and candidate.gender != 'Female' %} {{candidate.gender}} {% endif %}" />
                                     </div>
                                 </div>
                             </div>
@@ -239,40 +232,41 @@
                             </div>
                             <hr>
                             <p><b>Academic Information</b></p>
+                            
                             <div class="row">
                                 <div class="col-md-2">
-                                    <input type="checkbox" id="highschool" name="highsch_lvl" {% if education.high_school %} checked {% endif %}>
+                                    <input type="checkbox" id="highschool" name="highsch_lvl" {% if education.high_school %} checked {% endif %} >
                                     <label for="highschool">Secondary School (10th)</label>
                                 </div>
                                 <div class="col-md-2">
-                                    <select class="form-control" name="high_school" {% if education.high_school %} {% else %} disabled {% endif %}>
+                                    <select class="form-control" name="high_school" {% if education.high_school is None %} disabled {% endif %}>
                                         <option value="">-- Select Year --</option>
                                         {% for i in 1990|range_filter:current_year %}
-                                        <option value="{{i}}" {% if education.high_school == i %} selected {% endif %}>{{i}}</option>
+                                        <option value="{{i}}" {% if education.high_school|to_int == i %} selected {% endif %}>{{i}}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
                                 <div class="col-md-2">
-                                    <input type="checkbox" id="intermediate" name="intermediate_lvl">
+                                    <input type="checkbox" id="intermediate" name="intermediate_lvl" {% if education.intermediate %} checked {% endif %}>
                                     <label for="intermediate">Higher Secondary (12th)</label>
                                 </div>
                                 <div class="col-md-2">
-                                    <select class="form-control" name="intermediate" id="intermediate_year" disabled>
+                                    <select class="form-control" name="intermediate" id="intermediate_year" {% if education.intermediate is None %} disabled {% endif %}>
                                         <option value="">-- Select Year --</option>
                                         {% for i in 1990|range_filter:current_year %}
-                                        <option value="{{i}}">{{i}}</option>
+                                        <option value="{{i}}" {% if education.intermediate|to_int == i %} selected {% endif %}>{{i}}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
                                 <div class="col-md-2">
-                                    <input type="checkbox" id="diploma" name="diploma_lvl">
+                                    <input type="checkbox" id="diploma" name="diploma_lvl" {% if education.diploma %} checked {% endif %}>
                                     <label for="diploma">Diploma</label>
                                 </div>
                                 <div class="col-md-2">
-                                    <select class="form-control" name="diploma" id="diploma_year" disabled>
+                                    <select class="form-control" name="diploma" id="diploma_year" {% if education.diploma is None %} disabled {% endif %}>
                                         <option value="">-- Select Year --</option>
                                         {% for i in 1990|range_filter:current_year %}
-                                        <option value="{{ i }}">{{ i }}</option>
+                                        <option value="{{ i }}" {% if education.diploma|to_int == i %} selected {% endif %}>{{ i }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
@@ -280,36 +274,39 @@
                             <br>
                             <div class="row">
                                 <div class="col-md-2">
-                                    <input type="checkbox" id="graduation" name="graduation_lvl">
+                                    <input type="checkbox" id="graduation" name="graduation_lvl" {% if education.graduation %} checked {% endif %}>
                                     <label for="graduation">Graduation</label>
                                 </div>
                                 <div class="col-md-2">
-                                    <select class="form-control" name="graduation" id="graduation_year" disabled>
+                                    <select class="form-control" name="graduation" id="graduation_year" {% if education.graduation is None %} disabled {% endif %}>
                                         <option value="">-- Select Year --</option>
                                         {% for i in 1990|range_filter:current_year %}
-                                        <option value="{{ i }}">{{ i }}</option>
+                                        <option value="{{ i }}" {% if education.graduation|to_int == i %} selected {% endif %}>{{ i }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
                                 <div class="col-md-2">
-                                    <input type="checkbox" id="pg" name="postgrad_lvl">
+                                    <input type="checkbox" id="pg" name="postgrad_lvl" {% if education.pg %} checked {% endif %}>
                                     <label for="pg">Post Graduation</label>
                                 </div>
                                 <div class="col-md-2">
-                                    <select class="form-control" name="pg" id="pg_year" disabled>
+                                    <select class="form-control" name="pg" id="pg_year" {% if education.pg is None %} disabled {% endif %}>
                                         <option value="">-- Select Year --</option>
-                                        <option value="1990">1990</option>
-                                        
+                                        {% for i in 1990|range_filter:current_year %}
+                                        <option value="{{ i }}" {% if education.pg|to_int == i %} selected {% endif %}>{{ i }}</option>
+                                        {% endfor %}
                                     </select>
                                 </div>
                                 <div class="col-md-2">
-                                    <input type="checkbox" id="master_lvl" name="master_lvl">
+                                    <input type="checkbox" id="master_lvl" name="master_lvl" {% if education.master %} checked {% endif %}>
                                     <label for="master_lvl">Doctorate</label>
                                 </div>
                                 <div class="col-md-2">
-                                    <select class="form-control" name="master" id="master" disabled>
+                                    <select class="form-control" name="master" id="master" {% if education.master is None %} disabled {% endif %}>
                                         <option value="">-- Select Year --</option>
-                                        <option value="1990">1990</option>
+                                        {% for i in 1990|range_filter:current_year %}
+                                        <option value="{{ i }}" {% if education.master|to_int == i %} selected {% endif %}>{{ i }}</option>
+                                        {% endfor %}
                                     </select>
                                 </div>
                             </div>
@@ -317,11 +314,11 @@
                             <p><b><i>Employment & Salary Information</i></b></p>
                             <div class="row">
                                 <div class="col-md-2">
-                                    <input type="radio" id="fresher" name="exp_level" value="Fresher" checked>
+                                    <input type="radio" id="fresher" name="exp_level" value="Fresher" {% if experience.exp_level == "Fresher" %}checked {% endif %}>
                                     <label for="fresher">Fresher</label>
                                 </div>
                                 <div class="col-md-2">
-                                    <input type="radio" id="experienced" name="exp_level" value="Experienced">
+                                    <input type="radio" id="experienced" name="exp_level" value="Experienced" {% if experience.exp_level == "Experienced" %}checked {% endif %}>
                                     <label for="experienced">Experienced</label>
                                 </div>
                                 <div class="col-md-8">
@@ -329,9 +326,9 @@
                                         <label for="exp_year">Total Work Experience</label>
                                     </div>
                                     <div class="col-md-2">
-                                        <select class="form-control" name="exp_year" id="exp_year" required>
+                                        <select class="form-control" name="exp_year" id="exp_year">
                                             {% for i in 1|range_filter:20 %}
-                                            <option value="{{i}}">{{i}}</option>
+                                            <option value="{{i}}" {% if experience.exp_year|to_int == i %} selected {% endif %}>{{i}}</option>
                                             {% endfor %}
                                         </select>
                                     </div>
@@ -339,19 +336,10 @@
                                         <label for="exp_year">Year</label>
                                     </div>
                                     <div class="col-md-2">
-                                        <select class="form-control" name="exp_month" id="exp_moth" required>
-                                            <option value="0">0</option>
-                                            <option value="1">1</option>
-                                            <option value="2">2</option>
-                                            <option value="3">3</option>
-                                            <option value="4">4</option>
-                                            <option value="5">5</option>
-                                            <option value="6">6</option>
-                                            <option value="7">7</option>
-                                            <option value="8">8</option>
-                                            <option value="9">9</option>
-                                            <option value="10">10</option>
-                                            <option value="11">11</option>
+                                        <select class="form-control" name="exp_month" id="exp_moth">
+                                            {% for i in 0|range_filter:11 %}
+                                            <option value="{{i}}" {% if experience.exp_month|to_int == i %} selected {% endif %}>{{i}}</option>
+                                            {% endfor %}
                                         </select>
                                     </div>
                                     <div class="col-md-2">
@@ -365,33 +353,33 @@
                                     <div class="form-group">
                                         <label for="current_salary">Current Salary (monthly in hand) </label>
                                         <input type="text" class="form-control" name="curr_month_salary"
-                                            id="current_salary" placeholder="Current Salary" />
+                                            id="current_salary" placeholder="Current Salary" value="{{experience.curr_month_salary}}" />
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label for="current_ctc">Current CTC (yearly in hand) </label>
                                         <input type="text" class="form-control" name="curr_year_salary" id="current_ctc"
-                                            placeholder="Current CTC" />
+                                            placeholder="Current CTC" value="{{experience.curr_year_salary}}" />
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label for="expected_salary">Expected Salary (monthly in hand) </label>
                                         <input type="text" class="form-control" name="expec_month_salary"
-                                            id="expected_salary" placeholder="Expected Salary" />
+                                            id="expected_salary" placeholder="Expected Salary" value="{{experience.expec_month_salary}}" />
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label for="notice_period">Notice Period</label>
                                         <select class="form-control" name="notice_period" id="notice_period">
-                                            <option value="0 Days">0 Days</option>
-                                            <option value="15 Days">15 Days</option>
-                                            <option value="30 Days">30 Days</option>
-                                            <option value="45 Days">45 Days</option>
-                                            <option value="60 Days">60 Days</option>
-                                            <option value="90 Days">90 Days</option>
+                                            <option value="0 Days" {% if experience.notice_period == '0 Days' %} selected {% endif %}>0 Days</option>
+                                            <option value="15 Days" {% if experience.notice_period == '15 Days' %} selected {% endif %}>15 Days</option>
+                                            <option value="30 Days" {% if experience.notice_period == '30 Days' %} selected {% endif %}>30 Days</option>
+                                            <option value="45 Days" {% if experience.notice_period == '45 Days' %} selected {% endif %}>45 Days</option>
+                                            <option value="60 Days" {% if experience.notice_period == '60 Days' %} selected {% endif %}>60 Days</option>
+                                            <option value="90 Days" {% if experience.notice_period == '90 Days' %} selected {% endif %}>90 Days</option>
                                         </select>
                                     </div>
                                 </div>
@@ -402,6 +390,7 @@
                                         <label for="resume">Upload Resume</label>
                                         <div class="file-box-fix">
                                             <input type="file" class="form-control" name="resume" id="resume">
+                                            <a href="{{ experience.resume.url }}" target="_blank">View</a>
                                         </div>
                                     </div>
                                 </div>
@@ -420,7 +409,7 @@
                                     <div class="form-group">
                                         <label for="links">Additional Portfolio Links </label>
                                         <input type="text" class="form-control" name="links" id="links"
-                                            placeholder="Additional Portfolio Links" />
+                                            placeholder="Additional Portfolio Links" value="{% if experience.links %} {{experience.links}} {% endif %}" />
                                     </div>
                                 </div>
                             </div>

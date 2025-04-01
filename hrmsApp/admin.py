@@ -2,7 +2,6 @@ from django.contrib import admin
 from .models import UserProfile, Department, JobRole, Candidate, Education, Experience
 
 class UserProfileAdmin(admin.ModelAdmin):
-    # Define the fields to display in the list view
     list_display = ('user', 'designation')
 
 admin.site.register(UserProfile, UserProfileAdmin)
@@ -13,7 +12,7 @@ class JobRoleAdmin(admin.ModelAdmin):
 
 @admin.register(Department)
 class DepartmenteAdmin(admin.ModelAdmin):
-    list_display = ['id','dept_name']
+    list_display = ['dept_name']
 
 @admin.register(Candidate)
 class CandidateAdmin(admin.ModelAdmin):
@@ -21,7 +20,7 @@ class CandidateAdmin(admin.ModelAdmin):
 
 @admin.register(Education)
 class EducationAdmin(admin.ModelAdmin):
-    list_display = ['id','candidate_name','high_school']
+    list_display = ['candidate_name','high_school']
 
     def candidate_name(self, obj):
         return obj.candidate_id.name
@@ -29,7 +28,7 @@ class EducationAdmin(admin.ModelAdmin):
 
 @admin.register(Experience)
 class ExperienceAdmin(admin.ModelAdmin):
-    list_display = ['id','candidate_name','exp_level']
+    list_display = ['candidate_name','exp_level']
 
     def candidate_name(self, obj):
         return obj.candidate_id.name
