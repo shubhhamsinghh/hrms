@@ -257,33 +257,33 @@ def assign_to_view(request, token):
 def add_remark_view(request, token):
     if request.POST:
         candidate = Candidate.objects.get(token=token)
-        assign = Assign.objects.get(id=request.assigned_id)
+        assign = Assign.objects.get(id=request.POST.get('assigned_id'))
         remark = {}
         remark['candidate'] = candidate
         remark['assigned_id'] = assign
-        remark['rating'] = request.post.get('rating')
-        remark['re_status'] = request.post.get('re_status')
-        remark['remark'] = request.post.get('remark')
+        remark['rating'] = request.POST.get('rating')
+        remark['re_status'] = request.POST.get('re_status')
+        remark['remark'] = request.POST.get('remark')
         rSave = Remark.objects.create(**remark)
         if(rSave):
-            if request.post.get('key') == 'hr':
+            if request.POST.get('key') == 'hr':
                 s = 1
-            elif request.post.get('key') == 'tl':
+            elif request.POST.get('key') == 'tl':
                 s = 3
-            elif request.post.get('key') == 'manager':
+            elif request.POST.get('key') == 'manager':
                 s = 5
                 manager = {}
                 manager['remark'] = rSave
-                manager['work_exe'] = request.post.get('work_exe')
-                manager['applicable_skl'] = request.post.get('applicable_skl')
-                manager['appearance'] = request.post.get('appearance')
-                manager['attiude'] = request.post.get('attiude')
+                manager['work_exe'] = request.POST.get('work_exe')
+                manager['applicable_skl'] = request.POST.get('applicable_skl')
+                manager['appearance'] = request.POST.get('appearance')
+                manager['attiude'] = request.POST.get('attiude')
                 manager['education'] = request.post.get('education')
-                manager['enthusiasm'] = request.post.get('enthusiasm')
+                manager['enthusiasm'] = request.POST.get('enthusiasm')
                 ManagerRating.objects.create(**manager)
-            elif request.post.get('key') == 'final hr':
+            elif request.POST.get('key') == 'final hr':
                 s = 6
-            assign = Education.objects.get(id=assign.id)
+            assign = Assign.objects.get(id=assign.id)
             assign.int_round = s
             assign.save()
 

@@ -413,7 +413,6 @@
                             <div class="tab-pane mail-scroll" id="assigned">
                                 <div class="tab-pane mail-scroll" id="assigned">
                                     {% for assign in assigning %}
-                                        
                                         {% if assign.int_round == 6 %}
                                             <p style="color:red"><u>Final Remark</u></p>
                                             {% with mark=assign.remarks.first %}
@@ -507,7 +506,6 @@
                                                     <div class="form-group"><p>{{ assign.int_date }} [ {{ assign.int_time|time }} ]</p></div>
                                                 </div>
                                             </div>
-                                
                                             {% with mark=assign.remarks.first %}
                                                 {% if mark %}
                                                     <div class="row">
@@ -679,7 +677,7 @@
             <div class="modal-body">
                 <div class="row">
                     <!-- Assinged Form Start -->
-                    <form method="post" action="{% url 'add-remark' token=candidate.token %}" >
+                    <form method="post" action="{% url 'add_remark' token=candidate.token %}" >
                         {% csrf_token %}
                             <div class="col-md-12">
                             <input type="hidden" name="assigned_id" value="{{ hr_re.id|default:'' }}">
@@ -733,7 +731,7 @@
             <div class="modal-body">
                 <div class="row">
                     <!-- Assinged Form Start -->
-                    <form method="post" action="">
+                    <form method="post" action="{% url 'assign_to' token=candidate.token %}">
                         {% csrf_token %}
                             <div class="col-md-12">
                             <div class="form-group">
@@ -743,7 +741,7 @@
                                         <select class="form-control" name="assign_to" id="recruiter" required>
                                             <option value="">-- Select Assign To --</option>
                                             {% for tl in tls %}
-                                                <option value="{{ tl.id }}">{{ tl.name }}</option>
+                                                <option value="{{ tl.id }}">{{ tl }}</option>
                                             {% endfor %}
                                         </select>
                                     </div>
@@ -849,7 +847,7 @@
             <div class="modal-body">
                 <div class="row">
                     <!-- Assinged Form Start -->
-                    <form method="post" action="">
+                    <form method="post" action="{% url 'assign_to' token=candidate.token %}">
                         {% csrf_token %}
                             <div class="col-md-12">
                             <div class="form-group">
@@ -859,7 +857,7 @@
                                         <select class="form-control" name="assign_to" id="assign_to" required>
                                             <option value="">-- Select Assign To --</option>
                                             {% for manager in managers %}
-                                                <option value="{{ manager.id }}">{{ manager.name }}</option>
+                                                <option value="{{ manager.id }}">{{ manager }}</option>
                                             {% endfor %}
                                         </select>
                                     </div>
@@ -1031,9 +1029,8 @@
             <div class="modal-body">
                 <div class="row">
                     <!-- Assinged Form Start -->
-                    <form method="post" action="https://advointernal1.com/hrms/admin/final-remark/4KU3CTBM">
-                        <input type="hidden" name="_token" value="PFp2qYJTct6eQwUGjpJWzbxxGdYwu6BjM0MPmgws"
-                            autocomplete="off">
+                    <form method="post" action="">
+                       {% csrf_token %}
                         <div class="col-md-12">
                             <div class="form-group">
                                 <div style="display: flex; justify-content: space-between;">
