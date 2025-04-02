@@ -98,7 +98,7 @@ class Experience(models.Model):
 class Assign(models.Model):
     candidate=models.ForeignKey(Candidate,on_delete=models.CASCADE,related_name='assign_candidate')
     assign_from=models.ForeignKey(User,on_delete=models.CASCADE,related_name="assigned_from")
-    assign_to=models.ForeignKey(User,on_delete=models.CASCADE,related_name="assigned_to")
+    assign_to=models.ForeignKey(User,on_delete=models.CASCADE,null=True,blank=True,related_name="assigned_to")
     int_mode=models.CharField(max_length=30)
     int_date=models.DateField(null=True,blank=True)
     int_time=models.CharField(max_length=30,null=True,blank=True)

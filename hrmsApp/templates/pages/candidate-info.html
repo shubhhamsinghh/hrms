@@ -53,7 +53,7 @@
                                 {% endif %}
                                 {% if int_r == 2 %}
                                     {% if tl_re.assign_to.id == request.user.id %}
-                                    <a href="javascript:void(0)" class="btn btn-flat btn-primary" data-toggle="modal" data-target="#remarlTL">TL Remark</a>
+                                    <a href="javascript:void(0)" class="btn btn-flat btn-primary" data-toggle="modal" data-target="#remarkTL">TL Remark</a>
                                     {% endif %}
                                 {% endif %}
                                 {% if int_r == 1 %}
@@ -506,7 +506,8 @@
                                                     <div class="form-group"><p>{{ assign.int_date }} [ {{ assign.int_time|time }} ]</p></div>
                                                 </div>
                                             </div>
-                                            {% with mark=assign.remarks.first %}
+                                            {% with mark=assign.assign_candidate.first %}
+                                            
                                                 {% if mark %}
                                                     <div class="row">
                                                         <div class="col-md-1">
@@ -580,6 +581,7 @@
                                                     {% endwith %}
                                                 {% endif %}
                                             {% endwith %}
+                                            
                                         {% endif %}
                                         <hr>
                                     {% endfor %}
@@ -587,6 +589,27 @@
                                 
                             </div>
                             <div class="tab-pane mail-scroll" id="bgv">
+                                {% if candidate.bgv_link > 0 %}
+                                <p style="color:red"><u>BGV</u></p>
+                                <div class="row">
+                                    <div class="col-md-2">	
+                                        <div class="form-group"><label><strong>BGV Sent On :</strong> </label></div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <p>{{candidate.bgv_sent_on}}</p>
+                                    </div>
+                                    
+                                    {% if candidate.bgv_link == 2 %}
+                                    <div class="col-md-2">	
+                                        <div class="form-group"><label><strong>BGV Received On :</strong> </label></div>
+                                    </div>
+                                    <div class="col-md-3">	
+                                        <p>{{candidate.bgv_receive_on }}</p>
+                                    </div>
+                                     {% endif %}
+                                    </div>
+                                <hr>
+                                {% endif %}
                             </div>
                             <div class="tab-pane mail-scroll" id="documents">
                             </div>
@@ -793,7 +816,7 @@
             <div class="modal-body">
                 <div class="row">
                     <!-- Assinged Form Start -->
-                    <form method="post" action="" >
+                    <form method="post" action="{% url 'add_remark' token=candidate.token %}" >
                         {% csrf_token %}
                             <div class="col-md-12">
                             <input type="hidden" name="assigned_id" value="{{ tl_re.id|default:'' }}">
@@ -909,7 +932,7 @@
             <div class="modal-body">
                 <div class="row">
                     <!-- Assinged Form Start -->
-                    <form method="post" action="" >
+                    <form method="post" action="{% url 'add_remark' token=candidate.token %}" >
                         {% csrf_token %}
                             <div class="col-md-12">
                             <input type="hidden" name="assigned_id" value="{{ mn_re.id|default:'' }}">
@@ -1029,7 +1052,7 @@
             <div class="modal-body">
                 <div class="row">
                     <!-- Assinged Form Start -->
-                    <form method="post" action="">
+                    <form method="post" action="{% url 'final_remark' token=candidate.token %}">
                        {% csrf_token %}
                         <div class="col-md-12">
                             <div class="form-group">
@@ -1039,8 +1062,8 @@
                                         <br>
                                         <input type="radio" id="yes" name="interested" value="Yes" checked> <label
                                             for="yes"> Yes </label>
-                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
-                                            type="radio" id="no" name="interested" value="No"> <label for="no"> No
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <input type="radio" id="no" name="interested" value="No"> <label for="no"> No
                                         </label>
                                     </div>
 

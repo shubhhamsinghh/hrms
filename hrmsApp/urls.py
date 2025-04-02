@@ -15,5 +15,6 @@ urlpatterns = [
     path('candidate-info/<str:token>',views.candidate_info_view,name="candidate_info"),
     path('assign-to/<str:token>',views.assign_to_view,name="assign_to"),
     path('add-remark/<str:token>',views.add_remark_view,name="add_remark"),
+    path('final-remark/<str:token>',views.final_remark_view,name="final_remark"),
     path('logout/',views.logout_view,name="logout"),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

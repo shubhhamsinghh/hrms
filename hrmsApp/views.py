@@ -211,7 +211,12 @@ def candidate_info_view(request, token):
     tls = User.objects.filter(userprofile__designation='tl / supervisor',is_active=1)
     managers = User.objects.filter(userprofile__designation='manager',is_active=1)
     currentAssign = Assign.objects.filter(candidate=candidate.id).order_by('-id').first()
-    assigning = Assign.objects.filter(candidate=candidate.id).order_by('-id')
+    # assigning = Assign.objects.filter(candidate=candidate.id).order_by('-id')
+    # assigning = assigning.prefetch_related('assign_candidate')
+
+    assigning = Assign.objects.filter(candidate=candidate).order_by('-id') \
+        .prefetch_related('assign_candidate__remark_info')
+
     if currentAssign is None:
         int_r = None
     else:
@@ -248,7 +253,7 @@ def assign_to_view(request, token):
         assign['int_date'] = request.POST.get('int_date')
         assign['int_time'] = request.POST.get('int_time')
         if getMaxgetMaxassign is not None:
-           assign['int_round'] = ++getMaxgetMaxassign.int_round
+           assign['int_round'] = getMaxgetMaxassign.int_round + 1
         Assign.objects.create(**assign)
         messages.success(request, "Candidate Assigned successfully!")
         return redirect(request.META.get('HTTP_REFERER', 'fallback-url'))
@@ -256,6 +261,7 @@ def assign_to_view(request, token):
 
 def add_remark_view(request, token):
     if request.POST:
+        print(request.POST.get('key'))
         candidate = Candidate.objects.get(token=token)
         assign = Assign.objects.get(id=request.POST.get('assigned_id'))
         remark = {}
@@ -278,7 +284,7 @@ def add_remark_view(request, token):
                 manager['applicable_skl'] = request.POST.get('applicable_skl')
                 manager['appearance'] = request.POST.get('appearance')
                 manager['attiude'] = request.POST.get('attiude')
-                manager['education'] = request.post.get('education')
+                manager['education'] = request.POST.get('education')
                 manager['enthusiasm'] = request.POST.get('enthusiasm')
                 ManagerRating.objects.create(**manager)
             elif request.POST.get('key') == 'final hr':
@@ -290,6 +296,52 @@ def add_remark_view(request, token):
     messages.success(request, "Remark successfully!")
     return redirect(request.META.get('HTTP_REFERER', 'fallback-url'))
 
+def final_remark_view(request, token):
+    candidate = Candidate.objects.get(token=token)
+    assign = {}
+    assign['candidate'] = candidate
+    assign['assign_from'] = User.objects.get(id=request.user.id)
+    assign['assign_to'] = None
+    assign['int_mode'] = 0
+    assign['int_round'] = 6
+    a_data = Assign.objects.create(**assign)
+    if a_data:
+        remark = {}
+        remark['candidate'] = candidate
+        remark['assigned_id'] = a_data
+        remark['rating'] = 0
+        remark['re_status'] = request.POST.get('interested')+ "/" +request.POST.get('fi_status')
+        remark['remark'] = request.POST.get('remark')
+        r_data = Remark.objects.create(**remark)
+
+        if r_data:
+            candidate.designation = request.POST.get('designation'),
+            candidate.salary = request.POST.get('salary'),
+            candidate.doj = request.POST.get('doj')
+    
+            if request.POST.get('interested') == "Yes" and request.POST.get('fi_status') == "Selected" :
+                checkExp = Experience.objects.get(candidate_id=candidate.id)   
+                if checkExp.exp_level == "Experienced":
+                    # Mail::send('mails.bg_verification',['name' => $canID->name,'token' => $token], function($message) use ($canID)
+                    # {
+                    #     $to_emails = $canID->email;
+                    #     $message->to($to_emails)->subject('Background Verifivation Mail From HRMS');
+                    # });
+                    candidate.bgv_sent_on = datetime.now().strftime('%Y-%m-%d')
+                    candidate.bgv_link = 1
+                else:
+                    # Mail::send('mails.upload_doc',['name' => $canID->name,'token' => $token], function($message) use ($canID)
+                    # {
+                    #     $to_emails = $canID->email;
+                    #     $message->to($to_emails)->subject('Upload Document Mail From HRMS');
+                    # });
+                    candidate.doc_link = 1   
+            else:
+                candidate.status = 0; 
+            candidate.save()
+    
+    messages.success(request, "Remark successfully!")
+    return redirect(request.META.get('HTTP_REFERER', 'fallback-url'))
 
 
 def logout_view(request):
