@@ -26,4 +26,12 @@ def calculate_age(dob):
         age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
         return age
     return None
+
+@register.filter
+def time(value):
+    try:
+        time_obj = datetime.strptime(value, '%H:%M')
+        return time_obj.strftime('%I:%M %p')
+    except ValueError:
+        return value
        

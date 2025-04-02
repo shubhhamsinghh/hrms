@@ -22,7 +22,7 @@ class AuthenticationMiddleware:
 
     def __call__(self, request):
         PUBLIC_PATHS = ['/login/']
-        ADMIN_PATH = '/admin/' 
+        ADMIN_PATH = '/admin' 
 
         if (
             not request.user.is_authenticated 

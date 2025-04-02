@@ -8,6 +8,9 @@ from datetime import datetime
 from django.contrib import messages
 import secrets
 
+def home_view(request):
+    return redirect('login')
+
 @guest
 def login_view(request):
     if request.method == 'POST':
@@ -205,12 +208,32 @@ def candidate_info_view(request, token):
     education = candidate.ed_candidate.get() 
     experience = candidate.exp_candidate.get()
     hr_users = User.objects.filter(userprofile__designation='hr',is_active=1)
-   
+    tls = User.objects.filter(userprofile__designation='tl / supervisor',is_active=1)
+    managers = User.objects.filter(userprofile__designation='manager',is_active=1)
+    currentAssign = Assign.objects.filter(candidate=candidate.id).order_by('-id').first()
+    assigning = Assign.objects.filter(candidate=candidate.id).order_by('-id')
+    if currentAssign is None:
+        int_r = None
+    else:
+        int_r = currentAssign.int_round 
+    
+    hr_re = Assign.objects.filter(candidate=candidate.id,int_round__in=[0, 1]).first()
+    mn_re = Assign.objects.filter(candidate=candidate.id,int_round=4).first()
+    tl_re = Assign.objects.filter(candidate=candidate.id,int_round=2).first()
+
+
     return render(request, 'pages/candidate-info.html',{
         'candidate': candidate,
         'education': education,
         'experience': experience,
-        'hr_users': hr_users
+        'hr_users': hr_users,
+        'int_r': int_r,
+        'assigning': assigning,
+        'tls' : tls,
+        'managers': managers,
+        'hr_re': hr_re,
+        'mn_re': mn_re,
+        'tl_re': tl_re
     })
 
 def assign_to_view(request, token):
@@ -229,6 +252,45 @@ def assign_to_view(request, token):
         Assign.objects.create(**assign)
         messages.success(request, "Candidate Assigned successfully!")
         return redirect(request.META.get('HTTP_REFERER', 'fallback-url'))
+    
+
+def add_remark_view(request, token):
+    if request.POST:
+        candidate = Candidate.objects.get(token=token)
+        assign = Assign.objects.get(id=request.assigned_id)
+        remark = {}
+        remark['candidate'] = candidate
+        remark['assigned_id'] = assign
+        remark['rating'] = request.post.get('rating')
+        remark['re_status'] = request.post.get('re_status')
+        remark['remark'] = request.post.get('remark')
+        rSave = Remark.objects.create(**remark)
+        if(rSave):
+            if request.post.get('key') == 'hr':
+                s = 1
+            elif request.post.get('key') == 'tl':
+                s = 3
+            elif request.post.get('key') == 'manager':
+                s = 5
+                manager = {}
+                manager['remark'] = rSave
+                manager['work_exe'] = request.post.get('work_exe')
+                manager['applicable_skl'] = request.post.get('applicable_skl')
+                manager['appearance'] = request.post.get('appearance')
+                manager['attiude'] = request.post.get('attiude')
+                manager['education'] = request.post.get('education')
+                manager['enthusiasm'] = request.post.get('enthusiasm')
+                ManagerRating.objects.create(**manager)
+            elif request.post.get('key') == 'final hr':
+                s = 6
+            assign = Education.objects.get(id=assign.id)
+            assign.int_round = s
+            assign.save()
+
+    messages.success(request, "Remark successfully!")
+    return redirect(request.META.get('HTTP_REFERER', 'fallback-url'))
+
+
 
 def logout_view(request):
     logout(request)

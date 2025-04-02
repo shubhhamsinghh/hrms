@@ -34,8 +34,45 @@
                 <div class="box box-primary">
                     <div class="box-header with-border">
                         <h3 class="box-title pull-right">
+                           
+                            {% if hr_re is not None %}
+                                {% if int_r < 6 %}
+                                    {% if request.user.id == 1 or hr_re.assign_to.id == request.user.id %}
+                                        <a href="javascript:void(0)" class="btn btn-flat btn-primary" data-toggle="modal" data-target="#finalRemark">Final Remark</a>
+                                    {% endif %}
+                                {% endif %}
+                                {% if int_r == 4 %}
+                                    {% if mn_re.assign_to.id == request.user.id %}
+                                        <a href="javascript:void(0)" class="btn btn-flat btn-primary" data-toggle="modal" data-target="#remarkManager">Manager Remark</a>
+                                    {% endif %}
+                                {% endif %}
+                                {% if int_r == 3 %}
+                                    {% if requesr.user.id == 1 or hr_re.assign_to.id == request.user.id %}
+                                    <a href="javascript:void(0)" class="btn btn-flat btn-primary" data-toggle="modal" data-target="#assignManager">Assign to Manager</a>
+                                    {% endif %}
+                                {% endif %}
+                                {% if int_r == 2 %}
+                                    {% if tl_re.assign_to.id == request.user.id %}
+                                    <a href="javascript:void(0)" class="btn btn-flat btn-primary" data-toggle="modal" data-target="#remarlTL">TL Remark</a>
+                                    {% endif %}
+                                {% endif %}
+                                {% if int_r == 1 %}
+                                    {% if requesr.user.id == 1 or hr_re.assign_to.id == request.user.id %}
+                                    <a href="javascript:void(0)" class="btn btn-flat btn-primary" data-toggle="modal" data-target="#assignTL">Assign to TL</a>
+                                    {% endif %}
+                                {% endif %}
+                                {% if int_r == 0 %}
+                                    {% if requesr.user.id == 1 or hr_re.assign_to.id == request.user.id %}
+                                    <a href="javascript:void(0)" class="btn btn-flat btn-primary" data-toggle="modal" data-target="#remarkHR">HR Remark</a>
+                                    {% endif %}
+                                {% endif %}
+                            {% endif %}
+                            
+                            {% if int_r is None %}
                             <a href="javascript:void(0)" class="btn btn-flat btn-primary" data-toggle="modal"
                                 data-target="#assignHR">Assign to HR</a>
+                            {% endif %}
+                            
                         </h3>
                     </div>
                     <!-- /.box-header -->
@@ -374,6 +411,182 @@
                                 </div>
                             </div>
                             <div class="tab-pane mail-scroll" id="assigned">
+                                <div class="tab-pane mail-scroll" id="assigned">
+                                    {% for assign in assigning %}
+                                        
+                                        {% if assign.int_round == 6 %}
+                                            <p style="color:red"><u>Final Remark</u></p>
+                                            {% with mark=assign.remarks.first %}
+                                                {% if mark %}
+                                                    {% with values=mark.re_status %}
+                                                        <div class="row">
+                                                            <div class="col-md-1">
+                                                                <div class="form-group"><label><strong>Interested :</strong> </label></div>
+                                                            </div>
+                                                            <div class="col-md-2">
+                                                                <div class="form-group"><p>{{ values.0 }}</p></div>
+                                                            </div>
+                                
+                                                            <div class="col-md-1">
+                                                                <div class="form-group"><label><strong>Status :</strong> </label></div>
+                                                            </div>
+                                                            <div class="col-md-2">
+                                                                <div class="form-group"><p>{{ values.1 }}</p></div>
+                                                            </div>
+                                
+                                                            <div class="col-md-1">
+                                                                <div class="form-group"><label><strong>Remark :</strong> </label></div>
+                                                            </div>
+                                                            <div class="col-md-5">
+                                                                <div class="form-group"><p>{{ mark.remark }}</p></div>
+                                                            </div>
+                                
+                                                            <div class="col-md-2">
+                                                                <div class="form-group"><label><strong>Designation :</strong> </label></div>
+                                                            </div>
+                                                            <div class="col-md-2">
+                                                                <div class="form-group"><p>{{ data.designation|default:"-" }}</p></div>
+                                                            </div>
+                                
+                                                            <div class="col-md-2">
+                                                                <div class="form-group"><label><strong>Salary :</strong> </label></div>
+                                                            </div>
+                                                            <div class="col-md-2">
+                                                                <div class="form-group"><p>{{ data.salary|default:"-" }}</p></div>
+                                                            </div>
+                                
+                                                            <div class="col-md-2">
+                                                                <div class="form-group"><label><strong>Doj :</strong> </label></div>
+                                                            </div>
+                                                            <div class="col-md-2">
+                                                                <div class="form-group"><p>{{ data.Doj|date:"d-M-Y"|default:"-" }}</p></div>
+                                                            </div>
+                                                        </div>
+                                                    {% endwith %}
+                                                {% endif %}
+                                            {% endwith %}
+                                        {% endif %}
+                                
+                                        {% if assign.int_round < 6 %}
+                                        {% if assign.int_round >= 0 and assign.int_round < 2 %}
+                                            {% with heading="HR" %} <p style="color:red"><u>Assigned {{ heading }}</u></p> {% endwith %}
+                                        {% elif assign.int_round >= 2 and assign.int_round < 4 %}
+                                            {% with heading="Team Lead" %} <p style="color:red"><u>Assigned {{ heading }}</u></p> {% endwith %}
+                                        {% elif assign.int_round >= 4 and assign.int_round < 6 %}
+                                            {% with heading="Manager" %} <p style="color:red"><u>Assigned {{ heading }}</u></p> {% endwith %}
+                                        {% else %}
+                                            {% with heading="Final" %} <p style="color:red"><u>Assigned {{ heading }}</u></p> {% endwith %}
+                                        {% endif %}
+                                            
+                                            <div class="row">
+                                                <div class="col-md-1">
+                                                    <div class="form-group"><label><strong>To :</strong> </label></div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="form-group"><p>{{ assign.assign_to }}</p></div>
+                                                </div>
+                                
+                                                <div class="col-md-1">
+                                                    <div class="form-group"><label><strong>From :</strong> </label></div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="form-group"><p>{{ assign.assign_from }}</p></div>
+                                                </div>
+                                
+                                                <div class="col-md-1">
+                                                    <div class="form-group"><label><strong>Interview Mode :</strong> </label></div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="form-group"><p>{{ assign.int_mode }}</p></div>
+                                                </div>
+                                
+                                                <div class="col-md-1">
+                                                    <div class="form-group"><label><strong>Date :</strong> </label></div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="form-group"><p>{{ assign.int_date }} [ {{ assign.int_time|time }} ]</p></div>
+                                                </div>
+                                            </div>
+                                
+                                            {% with mark=assign.remarks.first %}
+                                                {% if mark %}
+                                                    <div class="row">
+                                                        <div class="col-md-1">
+                                                            <div class="form-group"><label><strong>Rating :</strong> </label></div>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <div class="form-group"><p>{{ mark.rating }}</p></div>
+                                                        </div>
+                                
+                                                        <div class="col-md-1">
+                                                            <div class="form-group"><label><strong>Status :</strong> </label></div>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <div class="form-group"><p>{{ mark.re_status }}</p></div>
+                                                        </div>
+                                
+                                                        <div class="col-md-1">
+                                                            <div class="form-group"><label><strong>Comment :</strong> </label></div>
+                                                        </div>
+                                                        <div class="col-md-5">
+                                                            <div class="form-group"><p>{{ mark.remark }}</p></div>
+                                                        </div>
+                                                    </div>
+                                
+                                                    {% with manager_rating=mark.manager_ratings.first %}
+                                                        {% if manager_rating %}
+                                                            <div class="row">
+                                                                <div class="col-md-2">
+                                                                    <div class="form-group"><label><strong>Work Experience :</strong> </label></div>
+                                                                </div>
+                                                                <div class="col-md-1">
+                                                                    <div class="form-group"><p>{{ manager_rating.work_exe }}</p></div>
+                                                                </div>
+                                
+                                                                <div class="col-md-2">
+                                                                    <div class="form-group"><label><strong>Applicable Skills :</strong> </label></div>
+                                                                </div>
+                                                                <div class="col-md-1">
+                                                                    <div class="form-group"><p>{{ manager_rating.applicable_skl }}</p></div>
+                                                                </div>
+                                
+                                                                <div class="col-md-2">
+                                                                    <div class="form-group"><label><strong>Appearance :</strong> </label></div>
+                                                                </div>
+                                                                <div class="col-md-1">
+                                                                    <div class="form-group"><p>{{ manager_rating.appearance }}</p></div>
+                                                                </div>
+                                
+                                                                <div class="col-md-2">
+                                                                    <div class="form-group"><label><strong>Attitude :</strong> </label></div>
+                                                                </div>
+                                                                <div class="col-md-1">
+                                                                    <div class="form-group"><p>{{ manager_rating.attiude }}</p></div>
+                                                                </div>
+                                
+                                                                <div class="col-md-2">
+                                                                    <div class="form-group"><label><strong>Education :</strong> </label></div>
+                                                                </div>
+                                                                <div class="col-md-1">
+                                                                    <div class="form-group"><p>{{ manager_rating.education }}</p></div>
+                                                                </div>
+                                
+                                                                <div class="col-md-2">
+                                                                    <div class="form-group"><label><strong>Enthusiasm :</strong> </label></div>
+                                                                </div>
+                                                                <div class="col-md-1">
+                                                                    <div class="form-group"><p>{{ manager_rating.enthusiasm }}</p></div>
+                                                                </div>
+                                                            </div>
+                                                        {% endif %}
+                                                    {% endwith %}
+                                                {% endif %}
+                                            {% endwith %}
+                                        {% endif %}
+                                        <hr>
+                                    {% endfor %}
+                                </div>
+                                
                             </div>
                             <div class="tab-pane mail-scroll" id="bgv">
                             </div>
@@ -389,6 +602,7 @@
     </section>
 </div>
 
+<!-- Assign HR -->
 <div class="modal fade" id="assignHR" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -454,6 +668,359 @@
     </div>
 </div>
 
+<!-- HR Remark Modal-->
+<div class="modal fade" id="remarkHR" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h4 class="modal-title">HR Remark</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <!-- Assinged Form Start -->
+                    <form method="post" action="{% url 'add-remark' token=candidate.token %}" >
+                        {% csrf_token %}
+                            <div class="col-md-12">
+                            <input type="hidden" name="assigned_id" value="{{ hr_re.id|default:'' }}">
+                            <input type="hidden" name="key" value="hr">
+                            <div class="form-group">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <div style="width: 60%;">
+                                        <label for="rating">Rating <span style="color: red;">*</span></label>
+                                        <br>
+                                        <input type="radio" id="poor" name="rating" value="2" checked> <label for="poor"> (1-2 Poor)</label> 
+                                         &nbsp;&nbsp;&nbsp;<input type="radio" id="fair" name="rating" value="3"> <label for="fair">(3 Fair) </label> 
+                                         &nbsp;&nbsp;&nbsp;<input type="radio" id="good" name="rating" value="4"> <label for="good"> (4 Good)</label>
+                                         &nbsp;&nbsp;&nbsp;<input type="radio" id="exe" name="rating" value="5"> <label for="exe"> (5 Excellent)</label>
+                                    </div>
+                                    
+                                    <div style="width: 39%;">
+                                       <label for="location">Status <span style="color: red;">*</span></label>
+                                        <br>
+                                        <input type="radio" id="shortlisted" name="re_status" value="Shortlisted" checked> <label for="shortlisted "> Shortlisted </label> 
+                                        &nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" id="onhold" name="re_status" value="On Hold"> <label for="onhold"> On Hold </label>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" id="rejected" name="re_status" value="Rejected"> <label for="rejected"> Rejected </label> 
+                                    </div>
+                                  
+                               </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="remark">Remark <span style="color: red;">*</span></label>
+                                <textarea class="form-control" name="remark" rows="3" cloumn="30" required></textarea>
+                            </div>
+                        
+                            <button type="submit" class="btn btn-success btn-flat pull-right"><i class="fa fa-hdd-o" style="width: 20px;"></i> Save</button>
+                        
+                      </div>
+                    </form>
+                    <!-- Assinged Form End -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Assign TL Modal-->
+<div class="modal fade" id="assignTL" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h4 class="modal-title">Assign To TL</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <!-- Assinged Form Start -->
+                    <form method="post" action="">
+                        {% csrf_token %}
+                            <div class="col-md-12">
+                            <div class="form-group">
+                               <div style="display: flex; justify-content: space-between;">
+                                    <div style="width: 48%;">
+                                        <label for="recruiter">Assign To <span style="color: red;">*</span></label>
+                                        <select class="form-control" name="assign_to" id="recruiter" required>
+                                            <option value="">-- Select Assign To --</option>
+                                            {% for tl in tls %}
+                                                <option value="{{ tl.id }}">{{ tl.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div style="width: 48%;">
+                                        <label for="recruiter">Interview Mode <span style="color: red;">*</span></label>
+                                        <br>
+                                         <input type="radio" id="telephonic" name="int_mode" value="Telephonic" checked> <label for="telephonic"> Telephonic</label> 
+                                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" id="virtual" name="int_mode" value="Virtual"> <label for="virtual"> Virtual </label> 
+                                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" id="f2f" name="int_mode" value="F2F"> <label for="f2f"> F2F</label>
+                                    </div>
+                                    
+                               </div>
+                            </div>
+                          
+                            <div class="form-group">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <div style="width: 48%;">
+                                        <label for="int_date">Date <span style="color: red;">*</span></label>
+                                        <input type="date" class="form-control" name="int_date" id="int_date" required>
+                                    </div>
+                                    
+                                    <div style="width: 48%;">
+                                       <label for="location">Timing</label>
+                                       <input type="time" class="form-control" name="int_time" id="int_time"> 
+                                    </div>
+                                  
+                               </div>
+                            </div>
+                        
+                            <button type="submit" class="btn btn-success btn-flat pull-right"><i class="fa fa-hdd-o" style="width: 20px;"></i> Save</button>
+                        
+                      </div>
+                    </form>
+                    <!-- Assinged Form End -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- TL Remark Modal-->
+<div class="modal fade" id="remarkTL" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h4 class="modal-title">TL Remark</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <!-- Assinged Form Start -->
+                    <form method="post" action="" >
+                        {% csrf_token %}
+                            <div class="col-md-12">
+                            <input type="hidden" name="assigned_id" value="{{ tl_re.id|default:'' }}">
+                            <input type="hidden" name="key" value="tl">
+                            <div class="form-group">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <div style="width: 60%;">
+                                        <label for="rating">Rating <span style="color: red;">*</span></label>
+                                        <br>
+                                        <input type="radio" id="poor" name="rating" value="2" checked> <label for="poor"> (1-2 Poor)</label> 
+                                         &nbsp;&nbsp;&nbsp;<input type="radio" id="fair" name="rating" value="3"> <label for="fair">(3 Fair) </label> 
+                                         &nbsp;&nbsp;&nbsp;<input type="radio" id="good" name="rating" value="4"> <label for="good"> (4 Good)</label>
+                                         &nbsp;&nbsp;&nbsp;<input type="radio" id="exe" name="rating" value="5"> <label for="exe"> (5 Excellent)</label>
+                                    </div>
+                                    
+                                    <div style="width: 39%;">
+                                       <label for="location">Status <span style="color: red;">*</span></label>
+                                        <br>
+                                        <input type="radio" id="shortlisted" name="re_status" value="Shortlisted" checked> <label for="shortlisted"> Shortlisted</label> 
+                                        &nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" id="onhold" name="re_status" value="On Hold"> <label for="onhold"> On Hold </label>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" id="rejected" name="re_status" value="Rejected"> <label for="rejected"> Rejected </label> 
+                                    </div>
+                                  
+                               </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="remark">Remark <span style="color: red;">*</span></label>
+                                <textarea class="form-control" name="remark" rows="3" cloumn="30" required></textarea>
+                            </div>
+                        
+                            <button type="submit" class="btn btn-success btn-flat pull-right"><i class="fa fa-hdd-o" style="width: 20px;"></i> Save</button>
+                        
+                           </div>
+                    </form>
+                    <!-- Assinged Form End -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Assign Manager Modal-->
+<div class="modal fade" id="assignManager" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h4 class="modal-title">Assign To Manager</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <!-- Assinged Form Start -->
+                    <form method="post" action="">
+                        {% csrf_token %}
+                            <div class="col-md-12">
+                            <div class="form-group">
+                               <div style="display: flex; justify-content: space-between;">
+                                    <div style="width: 48%;">
+                                        <label for="assign_to">Assign To <span style="color: red;">*</span></label>
+                                        <select class="form-control" name="assign_to" id="assign_to" required>
+                                            <option value="">-- Select Assign To --</option>
+                                            {% for manager in managers %}
+                                                <option value="{{ manager.id }}">{{ manager.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div style="width: 48%;">
+                                        <label for="mode">Interview Mode <span style="color: red;">*</span></label>
+                                        <br>
+                                         <input type="radio" id="telephonic" name="int_mode" value="Telephonic" checked> <label for="telephonic"> Telephonic</label> 
+                                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" id="virtual" name="int_mode" value="Virtual"> <label for="virtual"> Virtual </label> 
+                                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" id="f2f" name="int_mode" value="F2F"> <label for="f2f"> F2F</label>
+                                    </div>
+                                    
+                               </div>
+                            </div>
+                          
+                            <div class="form-group">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <div style="width: 48%;">
+                                        <label for="int_date">Date <span style="color: red;">*</span></label>
+                                        <input type="date" class="form-control" name="int_date" id="int_date" required>
+                                    </div>
+                                    
+                                    <div style="width: 48%;">
+                                       <label for="location">Timing</label>
+                                       <input type="time" class="form-control" name="int_time" id="int_time"> 
+                                    </div>
+                                  
+                               </div>
+                            </div>
+                        
+                            <button type="submit" class="btn btn-success btn-flat pull-right"><i class="fa fa-hdd-o" style="width: 20px;"></i> Save</button>
+                        
+                      </div>
+                    </form>
+                    <!-- Assinged Form End -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Manager Remark Modal-->
+<div class="modal fade" id="remarkManager" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h4 class="modal-title">Manager Remark</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <!-- Assinged Form Start -->
+                    <form method="post" action="" >
+                        {% csrf_token %}
+                            <div class="col-md-12">
+                            <input type="hidden" name="assigned_id" value="{{ mn_re.id|default:'' }}">
+                            <input type="hidden" name="key" value="manager">
+                            <div class="form-group">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <div style="width: 50%;">
+                                        <label for="rating">Rating <span style="color: red;">*</span></label>
+                                        <br>
+                                        <input type="radio" id="poor" name="rating" value="2" checked> <label for="poor"> (1-2 Poor)</label> 
+                                         &nbsp;<input type="radio" id="fair" name="rating" value="3"> <label for="fair">(3 Fair) </label> 
+                                         &nbsp;<input type="radio" id="good" name="rating" value="4"> <label for="good"> (4 Good)</label>
+                                         &nbsp;<input type="radio" id="exe" name="rating" value="5"> <label for="exe"> (5 Excellent)</label>
+                                    </div>
+                                    
+                                    <div style="width: 50%;">
+                                       <label for="location">Status <span style="color: red;">*</span></label>
+                                        <br>
+                                        <input type="radio" id="shortlisted" name="re_status" value="Shortlisted" checked> <label for="shortlisted"> Shortlisted </label> 
+                                        &nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" id="onhold" name="re_status" value="On Hold"> <label for="onhold"> On Hold </label>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" id="rejected" name="re_status" value="Rejected"> <label for="rejected"> Rejected </label> 
+                                    </div>
+                                  
+                               </div>
+                            </div>
+                            <p style="color:red;"><u>For Final Interviews</u></p>
+                            <div class="form-group">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <div style="width: 50%;">
+                                        <label for="rating">Work Experience <span style="color: red;">*</span></label>
+                                        <br>
+                                        <input type="radio" id="work_poor" name="work_exe" value="2" checked> <label for="work_poor"> (1-2 Poor)</label> 
+                                         &nbsp;<input type="radio" id="work_fair" name="work_exe" value="3"> <label for="work_fair">(3 Fair) </label> 
+                                         &nbsp;<input type="radio" id="work_good" name="work_exe" value="4"> <label for="work_good"> (4 Good)</label>
+                                         &nbsp;<input type="radio" id="work_exe" name="work_exe" value="5"> <label for="work_exe"> (5 Excellent)</label>
+                                    </div>
+                                    
+                                    <div style="width: 50%;">
+                                        <label for="rating">Applicable Skills <span style="color: red;">*</span></label>
+                                        <br>
+                                        <input type="radio" id="applicable_poor" name="applicable_skl" value="2" checked> <label for="applicable_poor"> (1-2 Poor)</label> 
+                                         &nbsp;<input type="radio" id="applicable_fair" name="applicable_skl" value="3"> <label for="applicable_fair">(3 Fair) </label> 
+                                         &nbsp;<input type="radio" id="applicable_good" name="applicable_skl" value="4"> <label for="applicable_good"> (4 Good)</label>
+                                         &nbsp;<input type="radio" id="applicable_exe" name="applicable_skl" value="5"> <label for="applicable_exe"> (5 Excellent)</label>
+                                    </div>
+                                  
+                               </div>
+                            </div>
+                            <div class="form-group">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <div style="width: 50%;">
+                                        <label for="rating">Appearance <span style="color: red;">*</span></label>
+                                        <br>
+                                        <input type="radio" id="appe_poor" name="appearance" value="2" checked> <label for="appe_poor"> (1-2 Poor)</label> 
+                                         &nbsp;<input type="radio" id="appe_fair" name="appearance" value="3"> <label for="appe_fair">(3 Fair) </label> 
+                                         &nbsp;<input type="radio" id="appe_good" name="appearance" value="4"> <label for="appe_good"> (4 Good)</label>
+                                         &nbsp;<input type="radio" id="appe_exe" name="appearance" value="5"> <label for="appe_exe"> (5 Excellent)</label>
+                                    </div>
+                                    
+                                    <div style="width: 50%;">
+                                        <label for="rating">Attiude <span style="color: red;">*</span></label>
+                                        <br>
+                                        <input type="radio" id="attiude_poor" name="attiude" value="2" checked> <label for="attiude_poor"> (1-2 Poor)</label> 
+                                         &nbsp;<input type="radio" id="attiude_fair" name="attiude" value="3"> <label for="attiude_fair">(3 Fair) </label> 
+                                         &nbsp;<input type="radio" id="attiude_good" name="attiude" value="4"> <label for="attiude_good"> (4 Good)</label>
+                                         &nbsp;<input type="radio" id="attiude_exe" name="attiude" value="5"> <label for="attiude_exe"> (5 Excellent)</label>
+                                    </div>
+                                  
+                               </div>
+                            </div>
+                             <div class="form-group">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <div style="width: 50%;">
+                                        <label for="rating">Education <span style="color: red;">*</span></label>
+                                        <br>
+                                        <input type="radio" id="education_poor" name="education" value="2" checked> <label for="education_poor"> (1-2 Poor)</label> 
+                                         &nbsp;<input type="radio" id="education_fair" name="education" value="3"> <label for="education_fair">(3 Fair) </label> 
+                                         &nbsp;<input type="radio" id="education_good" name="education" value="4"> <label for="education_good"> (4 Good)</label>
+                                         &nbsp;<input type="radio" id="education_exe" name="education" value="5"> <label for="education_exe"> (5 Excellent)</label>
+                                    </div>
+                                    
+                                    <div style="width: 50%;">
+                                        <label for="rating">Enthusiasm <span style="color: red;">*</span></label>
+                                        <br>
+                                        <input type="radio" id="enthusiasm_poor" name="enthusiasm" value="2" checked> <label for="enthusiasm_poor"> (1-2 Poor)</label> 
+                                         &nbsp;<input type="radio" id="enthusiasm_fair" name="enthusiasm" value="3"> <label for="enthusiasm_fair">(3 Fair) </label> 
+                                         &nbsp;<input type="radio" id="enthusiasm_good" name="enthusiasm" value="4"> <label for="enthusiasm_good"> (4 Good)</label>
+                                         &nbsp;<input type="radio" id="enthusiasm_exe" name="enthusiasm" value="5"> <label for="enthusiasm_exe"> (5 Excellent)</label>
+                                    </div>
+                                  
+                               </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="remark">Remark <span style="color: red;">*</span></label>
+                                <textarea class="form-control" name="remark" rows="3" cloumn="30" required></textarea>
+                            </div>
+                        
+                            <button type="submit" class="btn btn-success btn-flat pull-right"><i class="fa fa-hdd-o" style="width: 20px;"></i> Save</button>
+                        
+                      </div>
+                    </form>
+                    <!-- Assinged Form End -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Final Remark -->
 <div class="modal fade" id="finalRemark" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -522,6 +1089,45 @@
                         </div>
                     </form>
                     <!-- Assinged Form End -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- BGV Remark -->
+<div class="modal fade" id="bgbRemark" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h4 class="modal-title">BGV Remark</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <!-- BGV Form Start -->
+                    <form method="post" action="" >
+                        {% csrf_token %}
+                            <div class="col-md-12">
+                              <div class="form-group">
+                              <label for="">BG Verify<span style="color: red;">*</span></label>
+                              <br>
+                              <input type="radio" id="bgv_yes" name="bgv_verify" value="Yes" checked> <label for="bgv_yes"> Yes </label> 
+                              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" id="bgv_no" name="bgv_verify" value="No"> <label for="bgv_no"> No </label> 
+                              </div>
+                            
+                            
+                              <div class="form-group">
+                                 <label for="remark">Remark <span style="color: red;">*</span></label>
+                                 <textarea class="form-control" name="bgv_remark" rows="3" cloumn="30" required></textarea>
+                              </div>
+                        
+                            <button type="submit" class="btn btn-success btn-flat pull-right"><i class="fa fa-hdd-o" style="width: 20px;"></i> Save</button>
+                        
+                           </div>
+                    </form>
+                    <!-- BGV Form End -->
                 </div>
             </div>
         </div>
