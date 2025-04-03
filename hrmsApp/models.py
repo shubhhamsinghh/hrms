@@ -102,7 +102,7 @@ class Experience(models.Model):
         return f"{self.candidate_id.name}"
     
 class Assign(models.Model):
-    candidate=models.ForeignKey(Candidate,on_delete=models.CASCADE,related_name='assign_candidate')
+    candidate=models.ForeignKey(Candidate,on_delete=models.CASCADE,related_name='candidate_d')
     assign_from=models.ForeignKey(User,on_delete=models.CASCADE,related_name="assigned_from")
     assign_to=models.ForeignKey(User,on_delete=models.CASCADE,null=True,blank=True,related_name="assigned_to")
     int_mode=models.CharField(max_length=30)
@@ -112,6 +112,7 @@ class Assign(models.Model):
 
     def __str__(self):
         return f"{self.candidate.name}"
+    
     
 class Remark(models.Model):
     candidate=models.ForeignKey(Candidate,on_delete=models.CASCADE,related_name='remark_to_cand')

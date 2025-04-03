@@ -36,6 +36,11 @@
                         <h3 class="box-title pull-right">
                            
                             {% if hr_re is not None %}
+                                {% if candidate.bgv_link == 2 and candidate.doc_link == 0 %}
+                                   {% if request.user.id == 1 or hr_re.assign_to.id == request.user.id %}
+                                        <a href="javascript:void(0)" class="btn btn-flat btn-primary" data-toggle="modal" data-target="#bgbRemark">BGV Remark</a>
+                                   {% endif %}
+                                {% endif %}
                                 {% if int_r < 6 %}
                                     {% if request.user.id == 1 or hr_re.assign_to.id == request.user.id %}
                                         <a href="javascript:void(0)" class="btn btn-flat btn-primary" data-toggle="modal" data-target="#finalRemark">Final Remark</a>
@@ -415,9 +420,9 @@
                                     {% for assign in assigning %}
                                         {% if assign.int_round == 6 %}
                                             <p style="color:red"><u>Final Remark</u></p>
-                                            {% with mark=assign.remarks.first %}
+                                            {% with mark=assign.assign_candidate.first %}
                                                 {% if mark %}
-                                                    {% with values=mark.re_status %}
+                                                   {% with values=mark.re_status|split:"/" %}
                                                         <div class="row">
                                                             <div class="col-md-1">
                                                                 <div class="form-group"><label><strong>Interested :</strong> </label></div>
@@ -465,7 +470,9 @@
                                                 {% endif %}
                                             {% endwith %}
                                         {% endif %}
-                                
+                                        
+                                        
+
                                         {% if assign.int_round < 6 %}
                                         {% if assign.int_round >= 0 and assign.int_round < 2 %}
                                             {% with heading="HR" %} <p style="color:red"><u>Assigned {{ heading }}</u></p> {% endwith %}
@@ -473,8 +480,6 @@
                                             {% with heading="Team Lead" %} <p style="color:red"><u>Assigned {{ heading }}</u></p> {% endwith %}
                                         {% elif assign.int_round >= 4 and assign.int_round < 6 %}
                                             {% with heading="Manager" %} <p style="color:red"><u>Assigned {{ heading }}</u></p> {% endwith %}
-                                        {% else %}
-                                            {% with heading="Final" %} <p style="color:red"><u>Assigned {{ heading }}</u></p> {% endwith %}
                                         {% endif %}
                                             
                                             <div class="row">
@@ -507,7 +512,6 @@
                                                 </div>
                                             </div>
                                             {% with mark=assign.assign_candidate.first %}
-                                            
                                                 {% if mark %}
                                                     <div class="row">
                                                         <div class="col-md-1">
@@ -531,8 +535,8 @@
                                                             <div class="form-group"><p>{{ mark.remark }}</p></div>
                                                         </div>
                                                     </div>
-                                
-                                                    {% with manager_rating=mark.manager_ratings.first %}
+                                                    
+                                                {% with manager_rating=mark.remark_info.first %}
                                                         {% if manager_rating %}
                                                             <div class="row">
                                                                 <div class="col-md-2">
@@ -578,7 +582,7 @@
                                                                 </div>
                                                             </div>
                                                         {% endif %}
-                                                    {% endwith %}
+                                                {% endwith %}
                                                 {% endif %}
                                             {% endwith %}
                                             
@@ -590,6 +594,23 @@
                             </div>
 
                             <div class="tab-pane mail-scroll" id="bgv">
+                                {% if bgv_remark %}
+                                  <p style="color:red"><u>BGV Remark</u></p>
+                                  <div class="row">
+                                    <div class="col-md-2">	
+                                        <div class="form-group"><label><strong>BG Verify :</strong> </label></div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <p>{{bgv_remark.re_status}}</p>
+                                    </div>
+                                    <div class="col-md-2">	
+                                        <div class="form-group"><label><strong>BG Remark :</strong> </label></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p>{{bgv_remark.remark }}</p>
+                                    </div>
+                                    </div>
+                                {% endif %}
                                 {% if candidate.bgv_link > 0 %}
                                 <p style="color:red"><u>BGV</u></p>
                                 <div class="row">
@@ -697,7 +718,7 @@
                                             </div>
                                             <div class="col-md-2">	
                                                 <div class="form-group"><p>
-                                                    <a href="{{b.bgv_doc.first.offer_latter}}">View</a>
+                                                    {% if b.bgv_doc.first.offer_latter %} <a href="{{b.bgv_doc.first.offer_latter.url}}" target="_blank">View</a> {% else %} - {% endif %}
                                                     </p>
                                                 </div>
                                             </div>
@@ -707,7 +728,7 @@
                                             </div>
                                             <div class="col-md-2">	
                                                 <div class="form-group"><p>
-                                                    
+                                                    {% if b.bgv_doc.first.relieving_latter %} <a href="{{b.bgv_doc.first.relieving_latter.url}}" target="_blank">View</a> {% else %} - {% endif %}
                                                     </p>
                                                 </div>
                                             </div>
@@ -717,7 +738,7 @@
                                             </div>
                                             <div class="col-md-2">	
                                                 <div class="form-group"><p>
-                                                    
+                                                    {% if b.bgv_doc.first.exp_certificate %} <a href="{{b.bgv_doc.first.exp_certificate.url}}" target="_blank">View</a> {% else %} - {% endif %}
                                                     </p>
                                                 </div>
                                             </div>
@@ -726,8 +747,13 @@
                                                 <div class="form-group"><label><strong> Salary Slip :</strong> </label></div>
                                             </div>
                                             <div class="col-md-2">	
-                                                <div class="form-group"><p>
-                                                   
+                                                <div class="form-group">
+                                                    <p>
+                                                    {% if b.bgv_doc.first.salary_slip0 %} <a href="{{b.bgv_doc.first.salary_slip0.url}}" target="_blank">View</a> {% else %} - {% endif %}
+                                                    &nbsp;
+                                                    {% if b.bgv_doc.first.salary_slip1 %} <a href="{{b.bgv_doc.first.salary_slip1.url}}" target="_blank">View</a> {% else %} - {% endif %}
+                                                    &nbsp;
+                                                    {% if b.bgv_doc.first.salary_slip2 %} <a href="{{b.bgv_doc.first.salary_slip2.url}}" target="_blank">View</a> {% else %} - {% endif %}
                                                     </p>
                                                 </div>
                                             </div>
@@ -1254,7 +1280,7 @@
             <div class="modal-body">
                 <div class="row">
                     <!-- BGV Form Start -->
-                    <form method="post" action="" >
+                    <form method="post" action="{% url 'bgv_remark' token=candidate.token %}" >
                         {% csrf_token %}
                             <div class="col-md-12">
                               <div class="form-group">

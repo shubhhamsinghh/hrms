@@ -34,4 +34,8 @@ def time(value):
         return time_obj.strftime('%I:%M %p')
     except ValueError:
         return value
+
+@register.filter
+def split(value, delimiter="/"):
+    return value.split(delimiter)
        

@@ -190,7 +190,6 @@ def candidate_add_view(request):
        else:
            candidate['gender'] = request.POST.get('gender')
        
-
        c_data = Candidate.objects.create(**candidate)
    
        education = {}
@@ -201,7 +200,6 @@ def candidate_add_view(request):
        education['graduation'] = request.POST.get('graduation') if request.POST.get('graduation') else None
        education['pg'] = request.POST.get('pg') if request.POST.get('pg') else None
        education['master'] = request.POST.get('master') if request.POST.get('master') else None
-
        Education.objects.create(**education)
 
        exp = {}
@@ -216,8 +214,8 @@ def candidate_add_view(request):
        exp['links'] = request.POST.get('links') if request.POST.get('links') else None
        exp['resume'] = request.FILES.get('resume')
        exp['portfolio'] = request.FILES.get('portfolio')
-
        Experience.objects.create(**exp)
+
        messages.success(request, "Candidate created successfully!")
        return redirect('candidate_listing')
     
@@ -311,6 +309,24 @@ def candidate_listing(request):
     data = Candidate.objects.all().order_by('-id')
     return render(request, 'pages/candidate-list.html',{'data':data})
 
+def assigned_candidate_listing(request):
+    assigned = User.objects.get(id=request.user.id)
+    assigned_data = Assign.objects.filter(assign_to=assigned)
+    data = Candidate.objects.filter(
+    id__in=assigned_data.values_list('candidate_id', flat=True),
+    status=1
+    )
+    return render(request, 'pages/candidate-list.html',{'data':data})
+
+def closed_candidate_listing(request):
+    assigned = User.objects.get(id=request.user.id)
+    assigned_data = Assign.objects.filter(assign_to=assigned)
+    data = Candidate.objects.filter(
+    id__in=assigned_data.values_list('candidate_id', flat=True),
+    status=0
+    )
+    return render(request, 'pages/candidate-list.html',{'data':data})
+
 def candidate_info_view(request, token):
      
     candidate = get_object_or_404(
@@ -328,8 +344,15 @@ def candidate_info_view(request, token):
     # assigning = assigning.prefetch_related('assign_candidate')
     assigning = Assign.objects.filter(candidate=candidate).order_by('-id') \
         .prefetch_related('assign_candidate__remark_info')
+    
     bgv = Bgv.objects.filter(candidate=candidate)
     bgv = bgv.prefetch_related('bgv_doc')
+    bgv_assign = Assign.objects.filter(candidate=candidate,int_round=7).first()
+   
+    if bgv_assign:
+        bgv_remark = Remark.objects.get(assigned_id=bgv_assign.id)
+    else:
+        bgv_remark = None
 
     if currentAssign is None:
         int_r = None
@@ -353,13 +376,14 @@ def candidate_info_view(request, token):
         'hr_re': hr_re,
         'mn_re': mn_re,
         'tl_re': tl_re,
-        'bgv': bgv
+        'bgv': bgv,
+        'bgv_remark': bgv_remark
     })
 
 def assign_to_view(request, token):
     if request.POST:
         candidate = Candidate.objects.get(token=token)
-        getMaxgetMaxassign = Assign.objects.order_by('-int_round').first()
+        getMaxgetMaxassign = Assign.objects.filter(candidate=candidate).order_by('-int_round').first()
         assign = {}
         assign['candidate'] = candidate
         assign['assign_from'] = User.objects.get(id=request.user.id)
@@ -407,7 +431,7 @@ def add_remark_view(request, token):
             assign.int_round = s
             assign.save()
 
-    messages.success(request, "Remark successfully!")
+    messages.success(request, "Remark add successfully!")
     return redirect(request.META.get('HTTP_REFERER', 'fallback-url'))
 
 def final_remark_view(request, token):
@@ -454,8 +478,39 @@ def final_remark_view(request, token):
                 candidate.status = 0 
             candidate.save()
     
-    messages.success(request, "Remark successfully!")
+    messages.success(request, "Remark add successfully!")
     return redirect(request.META.get('HTTP_REFERER', 'fallback-url'))
+
+def bgv_remark_view(request, token):
+    if request.POST:
+      candidate = Candidate.objects.get(token=token)
+      assign = Assign()
+      assign.assign_from = User.objects.get(id=request.user.id)
+      assign.assign_to = None
+      assign.candidate = candidate
+      assign.int_mode = 0
+      assign.int_round = 7
+      assign.save()
+      remark = Remark()
+      remark.assigned_id = assign
+      remark.candidate = candidate
+      remark.rating = 0
+      remark.re_status = request.POST.get('bgv_verify')
+      remark.remark = request.POST.get('bgv_remark')
+      remark.save()
+      if request.POST.get('bgv_verify') == "Yes":
+            # Mail::send('mails.upload_doc',['name' => $canID->name,'token' => $token], function($message) use ($canID)
+            # {
+            #     $to_emails = $canID->email;
+            #     $message->to($to_emails)->subject('Upload Document Mail From HRMS');
+            # });
+            candidate.doc_link = 1
+      else:
+        candidate.status = 0
+      candidate.doc_link=1
+      candidate.save()
+      messages.success(request, "Remark add successfully!")
+      return redirect(request.META.get('HTTP_REFERER', 'fallback-url'))
 
 def send_test_email(request):
     # Email content

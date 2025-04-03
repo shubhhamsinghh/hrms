@@ -5,10 +5,10 @@
         <!-- <li class="header">Main Navigation</li> -->
         <li class="{% if request.path == '/dashboard/' %}active{% endif %}"><a href="{% url 'dashboard' %}"><i class="fa fa-tachometer"></i> <span>Dashboard</span></a></li>
         <li class="{% if request.path == '/candidate-form/' %}active{% endif %}"><a href="{% url 'candidate_form' %}"><i class="fa fa-user-plus"></i> <span>Candidate Form</span></a></li>
-        <li class=""><a href="{% url 'candidate_listing' %}"><i class="fa fa-users"></i> <span>Candidates Listing</span></a></li>
-        <li class=""><a href="assigned-candidate"><i class="fa fa-user"></i> <span>Assigned Candidates</span></a></li>
-        <li class=""><a href="closed-candidate"><i class="fa fa-user-times"></i> <span>Closed Candidates</span></a></li>
-        <li class=""><a href="users"><i class="fa fa-user"></i> <span>User</span></a></li>
+        <li class="{% if request.path == '/candidate-form/' %}active{% endif %}"><a href="{% url 'candidate_listing' %}"><i class="fa fa-users"></i> <span>Candidates Listing</span></a></li>
+        <li class="{% if request.path == '/assigned-candidate/' %}active{% endif %}"><a href="{% url 'assigned_candidate' %}"><i class="fa fa-user"></i> <span>Assigned Candidates</span></a></li>
+        <li class="{% if request.path == '/closed-candidate/' %}active{% endif %}"><a href="{% url 'closed_candidate' %}"><i class="fa fa-user-times"></i> <span>Closed Candidates</span></a></li>
+        <!-- <li class=""><a href="users"><i class="fa fa-user"></i> <span>User</span></a></li> -->
         </ul>
       <!-- /.sidebar-menu -->
     </section>
