@@ -86,8 +86,8 @@
                                     </b></a></li>
                             <li><a href="#bgv" data-toggle="tab"><b><i class="fa fa-briefcase text-blue"
                                             style="width:15px"></i> BGV </b></a></li>
-                            <li><a href="#documents" data-toggle="tab"><b><i class="fa fa-briefcase text-blue"
-                                            style="width:15px"></i> Documents </b></a></li>
+                            <!-- <li><a href="#documents" data-toggle="tab"><b><i class="fa fa-briefcase text-blue"
+                                            style="width:15px"></i> Documents </b></a></li> -->
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane mail-scroll active" id="initial_info">
@@ -588,6 +588,7 @@
                                 </div>
                                 
                             </div>
+
                             <div class="tab-pane mail-scroll" id="bgv">
                                 {% if candidate.bgv_link > 0 %}
                                 <p style="color:red"><u>BGV</u></p>
@@ -604,11 +605,137 @@
                                         <div class="form-group"><label><strong>BGV Received On :</strong> </label></div>
                                     </div>
                                     <div class="col-md-3">	
-                                        <p>{{candidate.bgv_receive_on }}</p>
+                                        <p>{{candidate.bgv_received_on }}</p>
                                     </div>
                                      {% endif %}
                                     </div>
                                 <hr>
+                                {% endif %}
+                                {% if candidate.bgv_link == 2 %}
+                                
+                                {% for b in bgv %} 
+                                    <div class="row">
+                                          <div class="col-md-2">	
+                                              <div class="form-group"><label><strong>Company Name :</strong> </label></div>
+                                          </div>
+                                          <div class="col-md-2">	
+                                              <div class="form-group"><p>{{b.company_name|default:'-'}}</p></div>
+                                          </div>
+                                          
+                                          <div class="col-md-2">	
+                                              <div class="form-group"><label><strong>Location :</strong> </label></div>
+                                          </div>
+                                          <div class="col-md-2">	
+                                              <div class="form-group"><p>{{b.location|default:'-'}}</p></div>
+                                          </div>
+                                          
+                                          <div class="col-md-2">	
+                                              <div class="form-group"><label><strong>Profile :</strong> </label></div>
+                                          </div>
+                                          <div class="col-md-2">	
+                                              <div class="form-group"><p>{{b.profile|default:'-'}}</p></div>
+                                          </div>
+                                      
+                                          <div class="col-md-2">	
+                                              <div class="form-group"><label><strong>Employee ID :</strong> </label></div>
+                                          </div>
+                                          <div class="col-md-2">	
+                                              <div class="form-group"><p>{{b.emp_id|default:'-'}}</p></div>
+                                          </div>
+                                          
+                                          <div class="col-md-2">	
+                                              <div class="form-group"><label><strong> HR Name :</strong> </label></div>
+                                          </div>
+                                          <div class="col-md-2">	
+                                              <div class="form-group"><p>{{b.hr_name|default:'-'}}</p></div>
+                                          </div>
+                                          
+                                          <div class="col-md-2">	
+                                              <div class="form-group"><label><strong> HR Number :</strong> </label></div>
+                                          </div>
+                                          <div class="col-md-2">	
+                                              <div class="form-group"><p>{{b.hr_phone|default:'-'}}</p></div>
+                                          </div>
+                                  
+                                          <div class="col-md-2">	
+                                              <div class="form-group"><label><strong>HR Mail ID:</strong> </label></div>
+                                          </div>
+                                          <div class="col-md-2">	
+                                              <div class="form-group"><p>{{b.hr_mail|default:'-'}}</p></div>
+                                          </div>
+                                          
+                                          <div class="col-md-2">	
+                                              <div class="form-group"><label><strong> Manager Name :</strong> </label></div>
+                                          </div>
+                                          <div class="col-md-2">	
+                                              <div class="form-group"><p>{{b.manager_name|default:'-'}}</p></div>
+                                          </div>
+                                          
+                                          <div class="col-md-2">	
+                                              <div class="form-group"><label><strong> Manager Number :</strong> </label></div>
+                                          </div>
+                                          <div class="col-md-2">	
+                                              <div class="form-group"><p>{{b.manager_phone|default:'-'}}</p></div>
+                                          </div>
+                                      
+                                          <div class="col-md-2">	
+                                              <div class="form-group"><label><strong>Manager Mail ID:</strong> </label></div>
+                                          </div>
+                                          <div class="col-md-2">	
+                                              <div class="form-group"><p>{{b.manager_mail|default:'-'}}</p></div>
+                                          </div>
+                                          
+                                          <div class="col-md-2">	
+                                              <div class="form-group"><label><strong> Reason For Leaving:</strong> </label></div>
+                                          </div>
+                                          <div class="col-md-5">	
+                                              <div class="form-group"><p>{{b.leaving_reason|default:'-'}}</p></div>
+                                          </div>
+                                          {% if b.bgv_doc.first %}
+                                            <div class="col-md-2">	
+                                                <div class="form-group"><label><strong> Offer Latter:</strong> </label></div>
+                                            </div>
+                                            <div class="col-md-2">	
+                                                <div class="form-group"><p>
+                                                    <a href="{{b.bgv_doc.first.offer_latter}}">View</a>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="col-md-2">	
+                                                <div class="form-group"><label><strong> Relieving Letter:</strong> </label></div>
+                                            </div>
+                                            <div class="col-md-2">	
+                                                <div class="form-group"><p>
+                                                    
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="col-md-2">	
+                                                <div class="form-group"><label><strong> Exp Certificate :</strong> </label></div>
+                                            </div>
+                                            <div class="col-md-2">	
+                                                <div class="form-group"><p>
+                                                    
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="col-md-2">	
+                                                <div class="form-group"><label><strong> Salary Slip :</strong> </label></div>
+                                            </div>
+                                            <div class="col-md-2">	
+                                                <div class="form-group"><p>
+                                                   
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            
+                                           {% endif %}
+                                    </div>
+                                    <hr>
+                                    {% endfor %}
                                 {% endif %}
                             </div>
                             <div class="tab-pane mail-scroll" id="documents">

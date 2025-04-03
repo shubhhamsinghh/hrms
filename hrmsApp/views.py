@@ -3,10 +3,122 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, logout
 from .middlewares import auth, guest
 from django.contrib.auth.models import User
-from .models import Department, Candidate, Education, Experience, JobRole, Assign, Remark, ManagerRating
+from .models import Department, Candidate, Education, Experience, JobRole, Assign, Remark, ManagerRating, Bgv, Bgv_documents
 from datetime import datetime
 from django.contrib import messages
 import secrets
+from django.core.mail import send_mail
+from django.http import HttpResponse
+from django.urls import reverse
+
+
+def bgv_view(request, token):
+        candidate = Candidate.objects.get(token=token)
+        if candidate.bgv_link == 1 :
+            if candidate:
+                return render(request, 'bgv.html',{'candidate':candidate})
+            else:
+                return HttpResponse('404!, candidate not found!')
+        else:
+            return HttpResponse('404!, url not found!') 
+
+ 
+def bgv_verify_view(request, token):
+    if request.POST:
+         candidate = Candidate.objects.get(token=token)
+         if candidate.bgv_link == 1 :
+            record1 = {}
+            record1['candidate'] = candidate
+            record1['company_name'] = request.POST.get('company1')
+            record1['location'] = request.POST.get('location1')
+            record1['profile'] = request.POST.get('profile1')
+            record1['emp_id'] = request.POST.get('emp_id1')
+            record1['hr_name'] = request.POST.get('hr_name1')
+            record1['hr_phone'] = request.POST.get('hr_phone1')
+            record1['hr_mail'] = request.POST.get('hr_mail1')
+            record1['manager_name'] = request.POST.get('manager_name1')
+            record1['manager_phone'] = request.POST.get('manager_phone1')
+            record1['manager_mail'] = request.POST.get('manager_mail1')
+            record1['leaving_reason'] = request.POST.get('leaving_reason1')
+            b_data = Bgv.objects.create(**record1)
+            
+            bgv_doc = Bgv_documents()
+            bgbveri = {}
+            bgbveri['bgv'] = b_data
+            bgbveri['candidate'] = candidate
+            bgbveri['offer_latter'] = request.FILES.get('offer_latter1')
+            bgbveri['relieving_latter'] = request.FILES.get('relieving_letter1')
+            bgbveri['exp_certificate'] = request.FILES.get('exp_certificate1')
+            
+            salary_slips = request.FILES.getlist('salary_slip[]')
+            if salary_slips:
+                for i, file in enumerate(salary_slips):
+                    if i == 0:
+                        bgbveri['salary_slip0'] = file
+                    elif i == 1:
+                        bgbveri['salary_slip1'] = file
+                    elif i == 2:
+                        bgbveri['salary_slip2'] = file
+                    else:
+                        break 
+
+            for key, file in bgbveri.items():
+                if file: 
+                    setattr(bgv_doc, key, file)
+
+            bgv_doc.save()
+
+            record2 = {}
+            record2['candidate'] = candidate
+            record2['company_name'] = request.POST.get('company2')
+            record2['location'] = request.POST.get('location2')
+            record2['profile'] = request.POST.get('profile2')
+            record2['emp_id'] = request.POST.get('emp_id2')
+            record2['hr_name'] = request.POST.get('hr_name2')
+            record2['hr_phone'] = request.POST.get('hr_phone2')
+            record2['hr_mail'] = request.POST.get('hr_mail2')
+            record2['manager_name'] = request.POST.get('manager_name2')
+            record2['manager_phone'] = request.POST.get('manager_phone2')
+            record2['manager_mail'] = request.POST.get('manager_mail2')
+            record2['leaving_reason'] = request.POST.get('leaving_reason2')
+            b_data2 = Bgv.objects.create(**record2)
+            
+            bgv_doc2 = Bgv_documents()
+            bgbveri2 = {}
+            bgbveri2['bgv'] = b_data2
+            bgbveri2['candidate'] = candidate
+            bgbveri2['offer_latter'] = request.FILES.get('offer_latter2')
+            bgbveri2['relieving_latter'] = request.FILES.get('relieving_letter2')
+            bgbveri2['exp_certificate'] = request.FILES.get('exp_certificate2')
+            
+            salary_slips2 = request.FILES.getlist('salary_slip2[]')
+            if salary_slips2:
+                for i, file in enumerate(salary_slips2):
+                    if i == 0:
+                        bgbveri2['salary_slip0'] = file
+                    elif i == 1:
+                        bgbveri2['salary_slip1'] = file
+                    elif i == 2:
+                        bgbveri2['salary_slip2'] = file
+                    else:
+                        break 
+
+            for key, file in bgbveri2.items():
+                if file: 
+                    setattr(bgv_doc2, key, file)
+
+            bgv_doc2.save()
+            today_date = datetime.now().date() 
+            formatted_date = today_date.strftime('%d-%m-%Y')
+            candidate.bgv_link = 2
+            candidate.bgv_received_on = datetime.now().date()
+            candidate.save()
+         
+         return HttpResponse('Bvg upload Successfully!') 
+    else:
+        url = reverse('bgv_view', args=[token])
+        return redirect(url)
+        
 
 def home_view(request):
     return redirect('login')
@@ -211,11 +323,13 @@ def candidate_info_view(request, token):
     tls = User.objects.filter(userprofile__designation='tl / supervisor',is_active=1)
     managers = User.objects.filter(userprofile__designation='manager',is_active=1)
     currentAssign = Assign.objects.filter(candidate=candidate.id).order_by('-id').first()
+    
     # assigning = Assign.objects.filter(candidate=candidate.id).order_by('-id')
     # assigning = assigning.prefetch_related('assign_candidate')
-
     assigning = Assign.objects.filter(candidate=candidate).order_by('-id') \
         .prefetch_related('assign_candidate__remark_info')
+    bgv = Bgv.objects.filter(candidate=candidate)
+    bgv = bgv.prefetch_related('bgv_doc')
 
     if currentAssign is None:
         int_r = None
@@ -238,7 +352,8 @@ def candidate_info_view(request, token):
         'managers': managers,
         'hr_re': hr_re,
         'mn_re': mn_re,
-        'tl_re': tl_re
+        'tl_re': tl_re,
+        'bgv': bgv
     })
 
 def assign_to_view(request, token):
@@ -261,7 +376,6 @@ def assign_to_view(request, token):
 
 def add_remark_view(request, token):
     if request.POST:
-        print(request.POST.get('key'))
         candidate = Candidate.objects.get(token=token)
         assign = Assign.objects.get(id=request.POST.get('assigned_id'))
         remark = {}
@@ -271,7 +385,7 @@ def add_remark_view(request, token):
         remark['re_status'] = request.POST.get('re_status')
         remark['remark'] = request.POST.get('remark')
         rSave = Remark.objects.create(**remark)
-        if(rSave):
+        if rSave:
             if request.POST.get('key') == 'hr':
                 s = 1
             elif request.POST.get('key') == 'tl':
@@ -337,11 +451,24 @@ def final_remark_view(request, token):
                     # });
                     candidate.doc_link = 1   
             else:
-                candidate.status = 0; 
+                candidate.status = 0 
             candidate.save()
     
     messages.success(request, "Remark successfully!")
     return redirect(request.META.get('HTTP_REFERER', 'fallback-url'))
+
+def send_test_email(request):
+    # Email content
+    subject = 'Test Email from Django'
+    message = 'This is a test email sent from Django using the console backend.'
+    from_email = 'webmaster@localhost'  # Can be anything for testing
+    recipient_list = ['shubhamsingh@unibiztec.com']  # This can be any email address
+
+    # Send email (it will be printed to the console)
+    send_mail(subject, message, from_email, recipient_list)
+
+    # Return a response to the user
+    return HttpResponse('Test email sent! Check the console.')
 
 
 def logout_view(request):

@@ -79,6 +79,12 @@ def upload_portfolio_path(instance, filename):
     new_filename = f"{base_name}_{timestamp}{ext}"
     return os.path.join('portfolios/', new_filename)
 
+def upload_dgv_doc_path(instance, filename):
+    base_name, ext = os.path.splitext(filename)
+    timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
+    new_filename = f"{base_name}_{timestamp}{ext}"
+    return os.path.join('bgv-documents/', new_filename)
+
 class Experience(models.Model):
     candidate_id=models.ForeignKey(Candidate,on_delete=models.CASCADE,related_name='exp_candidate')
     exp_level=models.CharField(max_length=30)
@@ -129,4 +135,35 @@ class ManagerRating(models.Model):
 
     def __str__(self):
         return f"{self.remark}"
+    
+
+class Bgv(models.Model):
+    candidate=models.ForeignKey(Candidate,on_delete=models.CASCADE,related_name='bgv_candidate')
+    company_name=models.CharField(max_length=100, null=True, blank=True)
+    location=models.CharField(max_length=100, null=True, blank=True)
+    profile=models.CharField(max_length=100, null=True, blank=True)
+    emp_id=models.CharField(max_length=100, null=True, blank=True)
+    hr_name=models.CharField(max_length=100, null=True, blank=True)
+    hr_phone=models.CharField(max_length=100, null=True, blank=True)
+    hr_mail=models.EmailField(null=True, blank=True)
+    manager_name=models.CharField(max_length=100, null=True, blank=True)
+    manager_phone=models.CharField(max_length=100, null=True, blank=True)
+    manager_mail=models.EmailField(null=True, blank=True)
+    leaving_reason=models.CharField(max_length=100, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.candidate} {self.company_name}"
+    
+class Bgv_documents(models.Model):
+    candidate=models.ForeignKey(Candidate,on_delete=models.CASCADE,related_name='bgv_doc_candidate')
+    bgv=models.ForeignKey(Bgv,on_delete=models.CASCADE,related_name='bgv_doc')
+    offer_latter=models.FileField(upload_to=upload_dgv_doc_path, null=True, blank=True)
+    relieving_latter=models.FileField(upload_to=upload_dgv_doc_path, null=True, blank=True)
+    exp_certificate=models.FileField(upload_to=upload_dgv_doc_path, null=True, blank=True)
+    salary_slip0=models.FileField(upload_to=upload_dgv_doc_path, null=True, blank=True)
+    salary_slip1=models.FileField(upload_to=upload_dgv_doc_path, null=True, blank=True)
+    salary_slip2=models.FileField(upload_to=upload_dgv_doc_path, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.candidate} {self.bgv}"
 

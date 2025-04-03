@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock title %}</title>
+    <link rel="stylesheet" href="{% static 'assets/css/custome.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/fonts/stylesheet.css' %}">
+    <link href="{% static 'assets/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/build/toastr.min.css' %}" rel="stylesheet">
+</head>
+<body>
+    <div class="header">
+        <figure><img src="{% static 'assets/images/logo.png'%}" alt=""></figure>
+    </div>
+{% block context %} {% endblock context %}
+<script src="{% static 'assets/js/jquery.min.js' %}"></script>
+<script src="{% static 'js/toastr.min.js' %}"></script>
+<script src="{% static 'js/toastr-init.js' %}"></script>
+<script>
+    function isNumberKey(evt) {
+            var charCode = (evt.which) ? evt.which : evt.keyCode;
+            if (charCode > 31 && (charCode < 48 || charCode > 57))
+                return false;
+            return true;
+        }
+       
+        $('#resumeInput').on('change', function() {
+            var fileName = $(this).prop('files')[0].name;
+            $('#fileName').html('<span style="color:#fff;">' + fileName + '</span>');
+        });
+        $('#portInput').on('change', function() {
+            var fileName = $(this).prop('files')[0].name;
+            $('#fileName').html('<span style="color:#fff;">' + fileName + '</span>');
+        });
+</script>
+<!-- show action msg -->
+
+<!-- <script type="text/javascript">
+    $( document ).ready(function() {
+      toastr.success('message');
+      setTimeout(function(){ 
+      }, 500); 
+    });
+</script>    -->
+
+@yield('script')
+</body>
+</html>

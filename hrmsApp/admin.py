@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import UserProfile, Department, JobRole, Candidate, Education, Experience, Assign, Remark, ManagerRating
+from .models import UserProfile, Department, JobRole, Candidate, Education, Experience, Assign, Remark, ManagerRating, Bgv, Bgv_documents
 
 class UserProfileAdmin(admin.ModelAdmin):
     list_display = ('user', 'designation')
@@ -60,4 +60,18 @@ class RatingAdmin(admin.ModelAdmin):
 
     def candidate_name(self, obj):
         return obj.remark.candidate.name
+    
+@admin.register(Bgv)
+class BgvAdmin(admin.ModelAdmin):
+    list_display = ['candidate_name','company_name']
+
+    def candidate_name(self, obj):
+        return obj.candidate.name
+    
+@admin.register(Bgv_documents)
+class bgvdocAdmin(admin.ModelAdmin):
+    list_display = ['candidate_name','bgv']
+
+    def candidate_name(self, obj):
+        return obj.candidate.name
     
