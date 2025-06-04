@@ -51,7 +51,7 @@ class Candidate(models.Model):
     bgv_sent_on=models.DateField(null=True,blank=True)
     bgv_received_on=models.DateField(null=True,blank=True)
     doc_link=models.IntegerField(default=0)
-    address=models.IntegerField(default=0)
+    cand_status=models.IntegerField(default=0)
     status=models.IntegerField(default=1)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -116,8 +116,7 @@ class Assign(models.Model):
     int_round=models.IntegerField(default=0,help_text="0=>Assign to HR | 1=>HR Remarked | 2=>Assign to TL | 3=> TL Remarked | 4=>Assign to Manager | 5=>Manager Remarked | 6=>Final Remarked | 7=>BGV Remarked")
 
     def __str__(self):
-        return f"{self.candidate.name}"
-    
+        return f"{self.candidate.name}" 
     
 class Remark(models.Model):
     candidate=models.ForeignKey(Candidate,on_delete=models.CASCADE,related_name='remark_to_cand')
