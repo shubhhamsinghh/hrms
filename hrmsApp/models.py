@@ -43,10 +43,15 @@ class Candidate(models.Model):
     dob=models.DateField(null=True)
     gender=models.CharField(max_length=30,null=True,blank=True)
     address=models.CharField(max_length=100,null=True,blank=True)
+    designation=models.CharField(max_length=100,null=True,blank=True)
+    salary=models.CharField(max_length=100,null=True,blank=True)
+    doj=models.DateField(null=True,blank=True)
+    reporting_time=models.CharField(max_length=100,null=True,blank=True)
     bgv_link=models.IntegerField(default=0)
     bgv_sent_on=models.DateField(null=True,blank=True)
     bgv_received_on=models.DateField(null=True,blank=True)
     doc_link=models.IntegerField(default=0)
+    address=models.IntegerField(default=0)
     status=models.IntegerField(default=1)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -108,7 +113,7 @@ class Assign(models.Model):
     int_mode=models.CharField(max_length=30)
     int_date=models.DateField(null=True,blank=True)
     int_time=models.CharField(max_length=30,null=True,blank=True)
-    int_round=models.IntegerField(default=0,help_text="0=>Assign to HR | 1=>HR Remarked | 2=>Assign to TL | 3=> TL Remarked | 4=>Assign to Manager | 5=>Manager Remarked | 6=>Final Remarked | 7=>BGB Remarked")
+    int_round=models.IntegerField(default=0,help_text="0=>Assign to HR | 1=>HR Remarked | 2=>Assign to TL | 3=> TL Remarked | 4=>Assign to Manager | 5=>Manager Remarked | 6=>Final Remarked | 7=>BGV Remarked")
 
     def __str__(self):
         return f"{self.candidate.name}"
