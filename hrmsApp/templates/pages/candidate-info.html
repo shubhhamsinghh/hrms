@@ -10,13 +10,13 @@
 <div class="content-wrapper">
     <section class="content-header">
         <h1>
-            Candidates information [{{candidate.token}}]
+            Candidates Details [{{candidate.token}}]
         </h1>
         <ol class="breadcrumb">
             <li>
                 <a href="{% url 'dashboard' %}"><i class="fa fa-dashboard"></i> Home</a>
             </li>
-            <li>Candidates information</li>
+            <li>Candidates Details</li>
         </ol>
     </section>
     <section class="content">
@@ -34,8 +34,14 @@
                 <div class="box box-primary">
                     <div class="box-header with-border">
                         <h3 class="box-title pull-right">
-                           
+                      
                             {% if hr_re is not None %}
+                                {% if candidate.doc_link == 1 %}
+                                   {% if request.user.id == 1 or  hr_re.assign_to.id == request.user.id %}
+                                        <a href="javascript:void(0)" class="btn btn-flat btn-primary" data-toggle="modal" data-target="#documentRemark">Document Remark</a>
+                                   {% endif %}
+                                {% endif %}
+                                
                                 {% if candidate.bgv_link == 2 and candidate.doc_link == 0 %}
                                    {% if request.user.id == 1 or hr_re.assign_to.id == request.user.id %}
                                         <a href="javascript:void(0)" class="btn btn-flat btn-primary" data-toggle="modal" data-target="#bgbRemark">BGV Remark</a>
@@ -43,7 +49,7 @@
                                 {% endif %}
                                 {% if int_r < 6 %}
                                     {% if request.user.id == 1 or hr_re.assign_to.id == request.user.id %}
-                                        <a href="javascript:void(0)" class="btn btn-flat btn-primary" data-toggle="modal" data-target="#finalRemark">Final Remark</a>
+                                        <a href="javascript:void(0)" class="btn btn-flat btn-warning" data-toggle="modal" data-target="#finalRemark">Final Remark</a>
                                     {% endif %}
                                 {% endif %}
                                 {% if int_r == 4 %}
@@ -63,6 +69,7 @@
                                 {% endif %}
                                 {% if int_r == 1 %}
                                     {% if requesr.user.id == 1 or hr_re.assign_to.id == request.user.id %}
+                                    <a href="javascript:void(0)" class="btn btn-flat btn-primary" data-toggle="modal" data-target="#assignManager">Assign to Manager</a>
                                     <a href="javascript:void(0)" class="btn btn-flat btn-primary" data-toggle="modal" data-target="#assignTL">Assign to TL</a>
                                     {% endif %}
                                 {% endif %}
@@ -84,15 +91,16 @@
                     <div class="nav-tabs-custom">
                         <ul class="nav nav-tabs" id="myTab">
                             <li class="active"><a href="#initial_info" data-toggle="tab" aria-expanded="false"><b><i
-                                            class="fa fa-info-circle text-blue" style="width:15px"></i> Initial information
+                                            class="fa fa-user text-blue" style="width:15px"></i> Profile
                                     </b></a></li>
                             <li><a href="#assigned" data-toggle="tab" aria-expanded="true"><b><i
-                                            class="fa fa-tags text-blue" style="width:15px"></i> Assigned
+                                            class="fa fa-comments text-blue" style="width:15px"></i> Followups
                                     </b></a></li>
                             <li><a href="#bgv" data-toggle="tab"><b><i class="fa fa-briefcase text-blue"
                                             style="width:15px"></i> BGV </b></a></li>
-                            <!-- <li><a href="#documents" data-toggle="tab"><b><i class="fa fa-briefcase text-blue"
-                                            style="width:15px"></i> Documents </b></a></li> -->
+
+                            <li><a href="#documents" data-toggle="tab"><b><i class="fa fa-file text-blue"
+                                            style="width:15px"></i> Documents </b></a></li>
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane mail-scroll active" id="initial_info">
@@ -131,7 +139,7 @@
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group">
-                                            <p>candidate.emp_name</p>
+                                            <p>{{candidate.emp_name}}</p>
                                         </div>
                                     </div>
                                     {% endif %}
@@ -202,20 +210,11 @@
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group">
-                                            <p>{{candidate.father_name}}</p>
+                                            <p>{{candidate.father_name|default:'-'}}</p>
                                         </div>
                                     </div>
 
-                                    <div class="col-md-2">
-                                        <div class="form-group"><label><strong>Mobile No :</strong> </label></div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div class="form-group">
-                                            <p>{{candidate.mobile}}</p>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-2">
+                                     <div class="col-md-1">
                                         <div class="form-group"><label><strong>Email ID :</strong> </label></div>
                                     </div>
                                     <div class="col-md-3">
@@ -224,12 +223,23 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-1">
+                                    <div class="col-md-2">
+                                        <div class="form-group"><label><strong>Mobile No :</strong> </label></div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <p>{{candidate.mobile|default:'-'}}</p>
+                                        </div>
+                                    </div>
+
+                                   
+
+                                    <div class="col-md-2">
                                         <div class="form-group"><label><strong>DOB :</strong> </label></div>
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group">
-                                            <p>{{candidate.dob}}</p>
+                                            <p>{{candidate.dob|default:'-'}}</p>
                                         </div>
                                     </div>
 
@@ -238,7 +248,7 @@
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group">
-                                            <p>{{ candidate.dob|calculate_age }} year</p>
+                                            <p>  {% if candidate.dob %} {{ candidate.dob|calculate_age }} year {% else %} - {% endif %}</p>
                                         </div>
                                     </div>
 
@@ -247,7 +257,7 @@
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group">
-                                            <p>{{candidate.gender}}</p>
+                                            <p>{{candidate.gender|default:'-'}}</p>
                                         </div>
                                     </div>
 
@@ -256,7 +266,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <p>{{candidate.address}}</p>
+                                            <p>{{candidate.address|default:'-'}}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -369,7 +379,7 @@
                                     </div>
 
                                     <div class="col-md-2">
-                                        <div class="form-group"><label><strong>Expected Salary (Monthly) :</strong>
+                                        <div class="form-group"><label><strong>Expected&nbsp;Salary&nbsp;(Monthly)&nbsp;:</strong>
                                             </label></div>
                                     </div>
                                     <div class="col-md-2">
@@ -392,7 +402,7 @@
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group">
-                                            <p>{% if experience.resume %} <a href="{{experience.resume.url}}">View</a> {% endif %}</p>
+                                            <p>{% if experience.resume %} <a href="{{experience.resume.url}}">View</a> {% else %} - {% endif %}</p>
                                         </div>
                                     </div>
 
@@ -401,14 +411,14 @@
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group">
-                                            <p>{% if experience.portfolio %} <a href="{{experience.portfolio.url}}">View</a> {% endif %}</p>
+                                            <p>{% if experience.portfolio %} <a href="{{experience.portfolio.url}}">View</a> {% else %} - {% endif %}</p>
                                         </div>
                                     </div>
                                     <div class="col-md-2">
-                                        <div class="form-group"><label><strong>Additional Portfolio Links :</strong>
+                                        <div class="form-group"><label><strong>Additional&nbsp;Portfolio&nbsp;Links&nbsp;:</strong>
                                             </label></div>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-2">
                                         <div class="form-group">
                                             <p>{{experience.links|default:'-'}}</p>
                                         </div>
@@ -471,8 +481,6 @@
                                             {% endwith %}
                                         {% endif %}
                                         
-                                        
-
                                         {% if assign.int_round < 6 %}
                                         {% if assign.int_round >= 0 and assign.int_round < 2 %}
                                             {% with heading="HR" %} <p style="color:red"><u>Assigned {{ heading }}</u></p> {% endwith %}
@@ -484,7 +492,7 @@
                                             
                                             <div class="row">
                                                 <div class="col-md-1">
-                                                    <div class="form-group"><label><strong>To :</strong> </label></div>
+                                                    <div class="form-group"><label><strong>Interviewee&nbsp;:</strong> </label></div>
                                                 </div>
                                                 <div class="col-md-2">
                                                     <div class="form-group"><p>{{ assign.assign_to }}</p></div>
@@ -498,7 +506,7 @@
                                                 </div>
                                 
                                                 <div class="col-md-1">
-                                                    <div class="form-group"><label><strong>Interview Mode :</strong> </label></div>
+                                                    <div class="form-group"><label><strong>Interview :</strong> </label></div>
                                                 </div>
                                                 <div class="col-md-2">
                                                     <div class="form-group"><p>{{ assign.int_mode }}</p></div>
@@ -508,7 +516,7 @@
                                                     <div class="form-group"><label><strong>Date :</strong> </label></div>
                                                 </div>
                                                 <div class="col-md-2">
-                                                    <div class="form-group"><p>{{ assign.int_date }} [ {{ assign.int_time|time }} ]</p></div>
+                                                    <div class="form-group"><p>{{ assign.int_date }} {% if assign.int_time %} [ {{ assign.int_time|time }} ] {% endif %}</p></div>
                                                 </div>
                                             </div>
                                             {% with mark=assign.assign_candidate.first %}
@@ -793,6 +801,7 @@
                             <div class="form-group">
                                 <div style="display: flex; justify-content: space-between;">
                                     <div style="width: 48%;">
+                                        <input type="hidden" name="key" value="assigntohr">
                                         <label for="recruiter">Assign To <span style="color: red;">*</span></label>
                                         <select class="form-control" name="assign_to" id="recruiter" required>
                                             <option value="">-- Select Assign To --</option>
@@ -818,7 +827,7 @@
                             <div class="form-group">
                                 <div style="display: flex; justify-content: space-between;">
                                     <div style="width: 48%;">
-                                        <label for="int_date">Date <span style="color: red;">*</span></label>
+                                        <label for="int_date">Interview Date <span style="color: red;">*</span></label>
                                         <input type="date" class="form-control" name="int_date" id="int_date" required>
                                     </div>
 
@@ -856,7 +865,7 @@
                     <form method="post" action="{% url 'add_remark' token=candidate.token %}" >
                         {% csrf_token %}
                             <div class="col-md-12">
-                            <input type="hidden" name="assigned_id" value="{{ hr_re.id|default:'' }}">
+                            <input type="hidden" name="assigned_id" value="{{ hr_re.id|default:'-' }}">
                             <input type="hidden" name="key" value="hr">
                             <div class="form-group">
                                 <div style="display: flex; justify-content: space-between;">
@@ -972,7 +981,7 @@
                     <form method="post" action="{% url 'add_remark' token=candidate.token %}" >
                         {% csrf_token %}
                             <div class="col-md-12">
-                            <input type="hidden" name="assigned_id" value="{{ tl_re.id|default:'' }}">
+                            <input type="hidden" name="assigned_id" value="{{ tl_re.id|default:'-' }}">
                             <input type="hidden" name="key" value="tl">
                             <div class="form-group">
                                 <div style="display: flex; justify-content: space-between;">
@@ -1030,6 +1039,7 @@
                                <div style="display: flex; justify-content: space-between;">
                                     <div style="width: 48%;">
                                         <label for="assign_to">Assign To <span style="color: red;">*</span></label>
+                                        <input type="hidden" name="key" value="manager">
                                         <select class="form-control" name="assign_to" id="assign_to" required>
                                             <option value="">-- Select Assign To --</option>
                                             {% for manager in managers %}
@@ -1088,7 +1098,7 @@
                     <form method="post" action="{% url 'add_remark' token=candidate.token %}" >
                         {% csrf_token %}
                             <div class="col-md-12">
-                            <input type="hidden" name="assigned_id" value="{{ mn_re.id|default:'' }}">
+                            <input type="hidden" name="assigned_id" value="{{ mn_re.id|default:'-' }}">
                             <input type="hidden" name="key" value="manager">
                             <div class="form-group">
                                 <div style="display: flex; justify-content: space-between;">
@@ -1239,14 +1249,19 @@
 
                             <div class="form-group">
                                 <div style="display: flex; justify-content: space-between;">
-                                    <div style="width: 49%;">
+                                    <div style="width: 33%;">
                                         <label for="location">Salary</label>
                                         <input type="text" class="form-control" name="salary">
                                     </div>
                                     &nbsp;&nbsp;&nbsp;
-                                    <div style="width: 49%;">
+                                    <div style="width: 33%;">
                                         <label for="location">Doj</label>
                                         <input type="date" class="form-control" name="Doj">
+                                    </div>
+                                    &nbsp;&nbsp;&nbsp;
+                                    <div style="width: 33%;">
+                                        <label for="location">Reporting Time</label>
+                                        <input type="time" class="form-control" name="reporting_time">
                                     </div>
                                 </div>
                             </div>
@@ -1307,4 +1322,42 @@
     </div>
 </div>
 
+{% if candidate.doc_link == 1 %}
+<!-- Document Remark -->
+<div class="modal fade" id="documentRemark" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h4 class="modal-title">Document Remark</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <!-- Document Form Start -->
+                    <form method="post" action="{% url 'doc_remark' token=candidate.token %}" >
+                        {% csrf_token %}
+                            <div class="col-md-12">
+                              <div class="form-group">
+                              <label for="">Status<span style="color: red;">*</span></label>
+                              <br>
+                              <input type="radio" id="doc_yes" name="doc_status" value="Selected" checked> <label for="doc_yes"> Selected </label> 
+                              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" id="doc_no" name="doc_status" value="Rejected"> <label for="doc_no"> Rejected </label> 
+                              </div>
+                            
+                              <div class="form-group">
+                                 <label for="remark">Remark <span style="color: red;">*</span></label>
+                                 <textarea class="form-control" name="doc_remark" rows="3" cloumn="30" required></textarea>
+                              </div>
+                        
+                            <button type="submit" class="btn btn-success btn-flat pull-right"><i class="fa fa-hdd-o" style="width: 20px;"></i> Save</button>
+                        
+                           </div>
+                    </form>
+                    <!-- BGV Form End -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
 {% endblock content %}

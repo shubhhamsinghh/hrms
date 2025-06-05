@@ -139,8 +139,16 @@ def login_view(request):
 
 @auth
 def dashboard_view(request):
-    a1 = Candidate.objects.count()
-    a2 = User.objects.count()
+    if request.user.userprofile.designation == "admin" or request.user.userprofile.designation == "hr" :
+        a1 = Candidate.objects.count()
+    else:
+        a1 = 0
+
+    assigned_data = Assign.objects.filter(assign_to=request.user.id)
+    a2 = Candidate.objects.filter(
+    id__in=assigned_data.values_list('candidate_id', flat=True),
+    status=1
+    ).count()
     return render(request, 'pages/home.html',{'a1':a1, 'a2':a2})
 
 @auth
@@ -217,7 +225,7 @@ def candidate_add_view(request):
        Experience.objects.create(**exp)
 
        messages.success(request, "Candidate created successfully!")
-       return redirect('candidate_listing')
+       return redirect('candidates_listing')
     
 @auth
 def candidate_edit_view(request, token):
@@ -302,7 +310,7 @@ def candidate_update_view(request,token):
 
         experience.save()
         messages.success(request, "Candidate updates successfully!")
-        return redirect('candidate_listing')
+        return redirect('candidates_listing')
 
 
 def candidate_listing(request):
@@ -316,7 +324,24 @@ def assigned_candidate_listing(request):
     id__in=assigned_data.values_list('candidate_id', flat=True),
     status=1
     )
-    return render(request, 'pages/candidate-list.html',{'data':data})
+    assign_from_map = {
+        assign.candidate_id: {
+            'assign_from': assign.assign_from,
+            'int_date': assign.int_date
+        }
+        for assign in assigned_data
+    }
+
+    candidate_info = []
+    for candidate in data:
+        assign_info = assign_from_map.get(candidate.id)
+        candidate_info.append({
+            'candidate': candidate,
+            'assign_from': assign_info['assign_from'] if assign_info else None,
+            'int_date': assign_info['int_date'] if assign_info else None
+        })
+
+    return render(request, 'pages/assigned-candidates.html',{'data':candidate_info})
 
 def closed_candidate_listing(request):
     assigned = User.objects.get(id=request.user.id)
@@ -339,7 +364,6 @@ def candidate_info_view(request, token):
     tls = User.objects.filter(userprofile__designation='tl / supervisor',is_active=1)
     managers = User.objects.filter(userprofile__designation='manager',is_active=1)
     currentAssign = Assign.objects.filter(candidate=candidate.id).order_by('-id').first()
-    
     # assigning = Assign.objects.filter(candidate=candidate.id).order_by('-id')
     # assigning = assigning.prefetch_related('assign_candidate')
     assigning = Assign.objects.filter(candidate=candidate).order_by('-id') \
@@ -358,11 +382,11 @@ def candidate_info_view(request, token):
         int_r = None
     else:
         int_r = currentAssign.int_round 
+
     
     hr_re = Assign.objects.filter(candidate=candidate.id,int_round__in=[0, 1]).first()
     mn_re = Assign.objects.filter(candidate=candidate.id,int_round=4).first()
     tl_re = Assign.objects.filter(candidate=candidate.id,int_round=2).first()
-
 
     return render(request, 'pages/candidate-info.html',{
         'candidate': candidate,
@@ -391,11 +415,15 @@ def assign_to_view(request, token):
         assign['int_mode'] = request.POST.get('int_mode')
         assign['int_date'] = request.POST.get('int_date')
         assign['int_time'] = request.POST.get('int_time')
-        if getMaxgetMaxassign is not None:
-           assign['int_round'] = getMaxgetMaxassign.int_round + 1
+        if request.POST.get('key') is not None:
+            if request.POST.get('key') == "manager":
+                assign['int_round'] = 4
+        else:        
+            if getMaxgetMaxassign is not None:
+                assign['int_round'] = getMaxgetMaxassign.int_round + 1
         Assign.objects.create(**assign)
         messages.success(request, "Candidate Assigned successfully!")
-        return redirect(request.META.get('HTTP_REFERER', 'fallback-url'))
+        return redirect(request.META.get('HTTP_REFERER', 'dashboard'))
     
 
 def add_remark_view(request, token):
@@ -432,9 +460,10 @@ def add_remark_view(request, token):
             assign.save()
 
     messages.success(request, "Remark add successfully!")
-    return redirect(request.META.get('HTTP_REFERER', 'fallback-url'))
+    return redirect(request.META.get('HTTP_REFERER', 'dashboard'))
 
 def final_remark_view(request, token):
+    print(request.POST)
     candidate = Candidate.objects.get(token=token)
     assign = {}
     assign['candidate'] = candidate
@@ -456,6 +485,7 @@ def final_remark_view(request, token):
             candidate.designation = request.POST.get('designation'),
             candidate.salary = request.POST.get('salary'),
             candidate.doj = request.POST.get('doj')
+            candidate.reporting_time = request.POST.get('reporting_time')
     
             if request.POST.get('interested') == "Yes" and request.POST.get('fi_status') == "Selected" :
                 checkExp = Experience.objects.get(candidate_id=candidate.id)   
@@ -475,11 +505,15 @@ def final_remark_view(request, token):
                     # });
                     candidate.doc_link = 1   
             else:
-                candidate.status = 0 
+                candidate.status = 0
+
+            if request.POST.get('fi_status') == "Rejected":
+                candidate.cand_status = 1
+
             candidate.save()
     
     messages.success(request, "Remark add successfully!")
-    return redirect(request.META.get('HTTP_REFERER', 'fallback-url'))
+    return redirect(request.META.get('HTTP_REFERER', 'dashboard'))
 
 def bgv_remark_view(request, token):
     if request.POST:
@@ -510,7 +544,31 @@ def bgv_remark_view(request, token):
       candidate.doc_link=1
       candidate.save()
       messages.success(request, "Remark add successfully!")
-      return redirect(request.META.get('HTTP_REFERER', 'fallback-url'))
+      return redirect(request.META.get('HTTP_REFERER', 'dashboard'))
+    
+def doc_remark_view(request,token):
+    
+    candidate = Candidate.objects.get(token=token)
+    assign = Assign.objects.get(candidate_id=candidate.id, int_round=6)
+    remark = Remark.objects.get(assigned_id=assign.id)
+    if remark:
+        mrk = remark.re_status
+        statusPart = mrk.split('/')
+        if len(statusPart) == 2:
+           statusPart[1] =  request.POST.get('doc_status')
+           remark.re_status = '/'.join(statusPart)
+        remark.remark = remark.remark+"/"+request.POST.get('doc_remark')
+        remark.save()
+    if request.POST.get('doc_status') == "Rejected":
+        candidate.cand_status = 1
+    else:
+        candidate.cand_status = 2
+
+    candidate.status = 0
+    candidate.save()
+
+    messages.success(request, "Application Update Successfully !!")
+    return redirect(request.META.get('HTTP_REFERER', 'dashboard'))
 
 def send_test_email(request):
     # Email content

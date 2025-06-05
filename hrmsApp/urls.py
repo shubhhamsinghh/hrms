@@ -18,6 +18,7 @@ urlpatterns = [
     path('add-remark/<str:token>',views.add_remark_view,name="add_remark"),
     path('final-remark/<str:token>',views.final_remark_view,name="final_remark"),
     path('bgv-remark/<str:token>',views.bgv_remark_view,name="bgv_remark"),
+    path('doc-remark/<str:token>',views.doc_remark_view,name="doc_remark"),
     path('assigned-candidates/',views.assigned_candidate_listing,name="assigned_candidates"),
     path('closed-candidates/',views.closed_candidate_listing,name="closed_candidates"),
     path('send-email/', views.send_test_email, name='send_test_email'),

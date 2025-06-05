@@ -5,13 +5,13 @@
 <div class="content-wrapper">
     <section class="content-header">
         <h1>
-            Candidates Listing
+            Assigned Candidates
         </h1>
         <ol class="breadcrumb">
             <li>
                 <a href="{% url 'dashboard' %}"><i class="fa fa-dashboard"></i> Home</a>
             </li>
-            <li>Candidates Listing</li>
+            <li>Assigned Candidates</li>
         </ol>
     </section>
     <section class="content">
@@ -28,8 +28,7 @@
                 <!-- Horizontal Form -->
                 <div class="box box-primary">
                     <div class="box-header with-border">
-                        <h3 class="box-title">Candidate Listing</h3>
-                        <a href="{% url 'candidate_form' %}" class="btn btn-sm btn-primary btn-flat pull-right"><i class="fa fa-plus"></i> Add Candidate</a>
+                        <h3 class="box-title">Assigned Candidates</h3>
                     </div>
                     <!-- /.box-header -->
                    
@@ -39,12 +38,13 @@
                                     <tr>
                                         <th>#</th>
                                         <th>Interview Code</th>
-                                        <th>Name</th>
+                                        <th>Assign From</th>
+                                        <th>Candidate Name</th>
                                         <th>Mobile No.</th>
                                         <th>Email ID</th>
                                         <th>Department</th> 
-                                        <th>status</th> 
-                                        <th>Date</th>
+                                        <th>Status</th> 
+                                        <th>Interview Date</th>
                                         <th>
                                             <center>Action</center>
                                         </th>
@@ -52,19 +52,21 @@
                                 </thead>
                                 <tbody>
                                     {% for d in data %}
+                                  
                                     <tr>
                                         <td>{{ forloop.counter }}</td>
-                                        <td>{{d.token}}</td>
-                                        <td>{{d.name}}</td>
-                                        <td>{{d.mobile}}</td>
-                                        <td>{{d.email}}</td>
-                                        <td>{{d.dept_id.dept_name|default:''}}</td>
+                                        <td>{{d.candidate.token}}</td>
+                                        <td>{{d.assign_from}}</td>
+                                        <td>{{d.candidate.name}}</td>
+                                        <td>{{d.candidate.mobile}}</td>
+                                        <td>{{d.candidate.email}}</td>
+                                        <td>{{d.candidate.dept_id.dept_name|default:''}}</td>
                                         <td>-</td>
                                         <td>{{d.int_date}}</td>
                                         <td>
                                             <center>
-                                                <a class="btn btn-primary" href="{% url 'candidate_info' token=d.token %}" title="View"><i class="fa fa-arrows"></i></a>&nbsp;&nbsp;
-                                                <a class="btn btn-warning" href="{% url 'candidate_edit' token=d.token %}" title="View"><i class="fa fa-edit"></i></a>
+                                                <a class="btn btn-primary" href="{% url 'candidate_info' token=d.candidate.token %}" title="View"><i class="fa fa-arrows"></i></a>&nbsp;&nbsp;
+                                               
                                             </center>
                                         </td>
                                     </tr>

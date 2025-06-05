@@ -25,7 +25,7 @@ def calculate_age(dob):
         today = datetime.today().date()
         age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
         return age
-    return None
+    return "-"
 
 @register.filter
 def time(value):

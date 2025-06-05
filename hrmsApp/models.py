@@ -4,6 +4,7 @@ from datetime import date
 import datetime
 import os
 
+
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     designation = models.CharField(max_length=100, blank=True, null=True)
@@ -40,7 +41,7 @@ class Candidate(models.Model):
     father_name=models.CharField(max_length=70,null=True,blank=True)
     mobile=models.CharField(max_length=30,null=True,blank=True)
     email=models.EmailField(unique=True,null=True,blank=True)
-    dob=models.DateField(null=True)
+    dob=models.DateField(null=True,blank=True)
     gender=models.CharField(max_length=30,null=True,blank=True)
     address=models.CharField(max_length=100,null=True,blank=True)
     designation=models.CharField(max_length=100,null=True,blank=True)
@@ -51,7 +52,7 @@ class Candidate(models.Model):
     bgv_sent_on=models.DateField(null=True,blank=True)
     bgv_received_on=models.DateField(null=True,blank=True)
     doc_link=models.IntegerField(default=0)
-    cand_status=models.IntegerField(default=0)
+    cand_status=models.IntegerField(default=0,help_text="0=>In Process | 1=>Rejected | 2=>On board")
     status=models.IntegerField(default=1)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -171,4 +172,6 @@ class Bgv_documents(models.Model):
 
     def __str__(self):
         return f"{self.candidate} {self.bgv}"
+    
+
 

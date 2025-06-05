@@ -16,13 +16,13 @@
 <div class="content-wrapper">
     <section class="content-header">
         <h1>
-            Interview Application
+            Candidate Form
         </h1>
         <ol class="breadcrumb">
             <li>
                 <a href="{% url 'dashboard' %}"><i class="fa fa-dashboard"></i> Home</a>
             </li>
-            <li>Interview Application</li>
+            <li>Candidate Form</li>
         </ol>
     </section>
     <section class="content">
@@ -70,7 +70,7 @@
                                     <div class="form-group">
                                         <label for="interview_date">Date<span style="color: red;">*</span></label>
                                         <input type="date" class="form-control" placeholder="DD | MM | YYYY"
-                                            id="dateInput" name="int_date" required value="{{ candidate.int_date|format_date }}">
+                                            id="dateInput" name="int_date" required value="{{ candidate.int_date|format_date }}" readonly>
                                     </div>
                                 </div>
                             </div>
@@ -90,16 +90,16 @@
                                     <div class="form-group">
                                         <label for="employee_name" class="ref_emp_name">Employee Name<span
                                                 style="color: red;">*</span></label>
-                                        <input type="text" class="form-control" value="" name="ref_emp_name"
-                                            id="ref_emp_name" placeholder="Employee Name" />
+                                        <input type="text" class="form-control" name="ref_emp_name"
+                                            id="ref_emp_name" placeholder="Employee Name" value="{{candidate.emp_name}}"/>
                                     </div>
                                 </div>
                                 <div class="col-md-2 ref_emp_id {% if candidate.referred == 'Portal' %} dis-none {% endif %}">
                                     <div class="form-group">
                                         <label for="employee_id" class="ref_emp_id ">Employee ID<span
                                                 style="color: red;">*</span></label>
-                                        <input type="text" class="form-control" value="" name="ref_emp_id"
-                                            id="ref_emp_id" placeholder="Employee ID" />
+                                        <input type="text" class="form-control" name="ref_emp_id"
+                                            id="ref_emp_id" placeholder="Employee ID" value="{{candidate.emp_id}}"/>
                                     </div>
                                 </div>
 

@@ -12,23 +12,12 @@
      <div class="row">
        <!-- ./col -->
        
-       <!-- <div class="col-lg-3 col-sm-4 col-xs-6">
-         <div class="small-box bg-green" style="box-shadow: 4px 4px 4px grey;">
-           <div class="inner">
-             <h3>{{a1}}</h3>
-             <p>&nbsp;</p>
-           </div>
-           <div class="icon">
-             <i class="fa fa-users"></i>
-           </div>
-           <a href="{% url 'candidates_listing' %}" class="small-box-footer">Users</a>
-         </div>
-       </div> -->
+      {% if request.user.userprofile.designation == "admin" or request.user.userprofile.designation == "hr" %}
        <div class="col-lg-3 col-sm-4 col-xs-6">
          <!-- small box -->
          <div class="small-box bg-blue" style="box-shadow: 4px 4px 4px grey;">
            <div class="inner">
-             <h3>{{a2}}</h3>
+             <h3>{{a1}}</h3>
              <p>&nbsp;</p>
            </div>
            <div class="icon">
@@ -37,7 +26,21 @@
            <a href="{% url 'candidates_listing' %}" class="small-box-footer">Candidates List</a>
          </div>
        </div>
-      
+      {% endif %}
+
+       <div class="col-lg-3 col-sm-4 col-xs-6">
+         <!-- small box -->
+         <div class="small-box bg-red" style="box-shadow: 4px 4px 4px grey;">
+           <div class="inner">
+             <h3>{{a2}}</h3>
+             <p>&nbsp;</p>
+           </div>
+           <div class="icon">
+             <i class="fa fa-user"></i>
+           </div>
+           <a href="{% url 'assigned_candidates' %}" class="small-box-footer">Candidates List</a>
+         </div>
+       </div>
        
    </div>
     
