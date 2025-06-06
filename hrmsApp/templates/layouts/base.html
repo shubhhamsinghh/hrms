@@ -190,7 +190,7 @@
 {% if messages %}
  {% for message in messages %}
  <script>
-    // toastr.{{ message.tags }}('{{ messages }}')
+    toastr.{{ message.tags }}('{{ message|escapejs }}')
  </script>
 
   {% endfor %}

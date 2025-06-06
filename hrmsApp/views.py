@@ -11,12 +11,59 @@ from django.core.mail import send_mail
 from django.http import HttpResponse
 from django.urls import reverse
 
+def index_view(request):
+    return render(request, 'web-page/index.html')
+
+def verify_token_view(request):
+    code = request.POST.get("code")
+    if request.method == "POST":
+        if not code:
+           messages.error(request, "Interview Code can't be null!")
+           return redirect(request.META.get('HTTP_REFERER', 'index_view'))
+        else:
+            if Candidate.objects.filter(token=code).exists():
+               candidate = Candidate.objects.get(token=code)
+               if Assign.objects.filter(candidate=candidate, int_round__lte=2).exists():
+                   assigning = Assign.objects.filter(candidate=candidate, int_round=1)
+                   print(assigning)
+                   if assigning:
+                        request.session['VerifyToken'] =  code
+                        return redirect('interview_view')
+                   else:
+                        msg = 'Unauthorized access'
+                        return render(request,'web-page/404.html',{'msg':msg})
+               else:
+                    msg = "Interviewee not not assigned!"
+                    return render(request,'web-page/404.html',{'msg':msg})
+            else:
+                messages.error(request, "Invalid Interview Code!")
+                return redirect(request.META.get('HTTP_REFERER', 'index_view'))
+    else:
+        return redirect(request.META.get('HTTP_REFERER', 'index_view'))
+            
+
+def interview_view(request):
+    token = request.session.get('VerifyToken')
+    candidate = Candidate.objects.filter(token=token).first()
+    assigning = Assign.objects.filter(candidate=candidate,int_round__gt=1).first()
+    if assigning:
+        data = Candidate.objects.filter(token=token).first()
+        departments = Department.objects.all().order_by('dept_name')
+        designations = JobRole.objects.all().order_by('-id')
+        recruters =User.objects.filter(is_active=True,userprofile__designation__iexact='hr').order_by('-id')
+        return render(request,'web-page/interview.html',{'data':data,'departments':departments,'designations':designations,'recruters':recruters})
+    else:
+        msg = "URL not found!"
+        return render(request,'web-page/404.html',{'msg':msg})
+
+def interview_details_view(request):
+    pass
 
 def bgv_view(request, token):
         candidate = Candidate.objects.get(token=token)
         if candidate.bgv_link == 1 :
             if candidate:
-                return render(request, 'bgv.html',{'candidate':candidate})
+                return render(request, 'web-page/bgv.html',{'candidate':candidate})
             else:
                 return HttpResponse('404!, candidate not found!')
         else:
@@ -224,7 +271,7 @@ def candidate_add_view(request):
        exp['portfolio'] = request.FILES.get('portfolio')
        Experience.objects.create(**exp)
 
-       messages.success(request, "Candidate created successfully!")
+       messages.success(request, "Candidate created successfully.")
        return redirect('candidates_listing')
     
 @auth
@@ -309,7 +356,7 @@ def candidate_update_view(request,token):
             experience.portfolio = request.FILES.get('portfolio')
 
         experience.save()
-        messages.success(request, "Candidate updates successfully!")
+        messages.success(request, "Candidate updates successfully.")
         return redirect('candidates_listing')
 
 
@@ -350,7 +397,7 @@ def closed_candidate_listing(request):
     id__in=assigned_data.values_list('candidate_id', flat=True),
     status=0
     )
-    return render(request, 'pages/candidate-list.html',{'data':data})
+    return render(request, 'pages/closed-candidates.html',{'data':data})
 
 def candidate_info_view(request, token):
      
@@ -422,7 +469,7 @@ def assign_to_view(request, token):
             if getMaxgetMaxassign is not None:
                 assign['int_round'] = getMaxgetMaxassign.int_round + 1
         Assign.objects.create(**assign)
-        messages.success(request, "Candidate Assigned successfully!")
+        messages.success(request, "Candidate Assigned successfully.")
         return redirect(request.META.get('HTTP_REFERER', 'dashboard'))
     
 
@@ -459,7 +506,7 @@ def add_remark_view(request, token):
             assign.int_round = s
             assign.save()
 
-    messages.success(request, "Remark add successfully!")
+    messages.success(request, "Remark add successfully.")
     return redirect(request.META.get('HTTP_REFERER', 'dashboard'))
 
 def final_remark_view(request, token):
@@ -512,7 +559,7 @@ def final_remark_view(request, token):
 
             candidate.save()
     
-    messages.success(request, "Remark add successfully!")
+    messages.success(request, "Remark add successfully.")
     return redirect(request.META.get('HTTP_REFERER', 'dashboard'))
 
 def bgv_remark_view(request, token):
@@ -541,9 +588,10 @@ def bgv_remark_view(request, token):
             candidate.doc_link = 1
       else:
         candidate.status = 0
-      candidate.doc_link=1
+        candidate.doc_link=1
+
       candidate.save()
-      messages.success(request, "Remark add successfully!")
+      messages.success(request, "Remark add successfully.")
       return redirect(request.META.get('HTTP_REFERER', 'dashboard'))
     
 def doc_remark_view(request,token):
@@ -553,10 +601,10 @@ def doc_remark_view(request,token):
     remark = Remark.objects.get(assigned_id=assign.id)
     if remark:
         mrk = remark.re_status
-        statusPart = mrk.split('/')
+        statusPart = mrk.split('/') #convert string to list
         if len(statusPart) == 2:
            statusPart[1] =  request.POST.get('doc_status')
-           remark.re_status = '/'.join(statusPart)
+           remark.re_status = '/'.join(statusPart) #convert list into string
         remark.remark = remark.remark+"/"+request.POST.get('doc_remark')
         remark.save()
     if request.POST.get('doc_status') == "Rejected":
@@ -567,7 +615,7 @@ def doc_remark_view(request,token):
     candidate.status = 0
     candidate.save()
 
-    messages.success(request, "Application Update Successfully !!")
+    messages.success(request, "Application Update Successfully.")
     return redirect(request.META.get('HTTP_REFERER', 'dashboard'))
 
 def send_test_email(request):

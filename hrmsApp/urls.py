@@ -4,6 +4,10 @@ from django.conf.urls.static import static
 from django.conf import settings
 
 urlpatterns = [
+    path('',views.index_view,name="index_view"),
+    path('verify-token',views.verify_token_view,name="verify_token_view"),
+    path('interview',views.interview_view,name="interview_view"),
+    path('interview-details',views.interview_details_view,name="interview_details_view"),
     path('bgv-verification/<str:token>',views.bgv_view,name="bgv_view"),
     path('bgv_verify/<str:token>',views.bgv_verify_view,name="bgv_verify"),
     path('login/',views.login_view,name="login"),

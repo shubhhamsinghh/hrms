@@ -1,0 +1,20 @@
+{% extends 'layouts/web-base.html' %}
+{% block title %} Candidate Form {% endblock title %}
+{% block context %}
+ <div class="main">
+        <div class="container d-flex align-items-center justify-content-center min-vh-100">
+            <div class="verification-container">
+                <h2>Interview Code</h2>
+                <p>Please Enter Your Interview Reference Number</p>
+                <form action="{% url 'verify_token_view' %}" class="mt-4" method="post">
+                    {% csrf_token %}
+                    <input type="text" class="form-control mb-3" name="code" required maxlength="15" onkeyup="this.value = this.value.toUpperCase();">
+                    <button class="btn btn-submit">SUBMIT</button>
+                </form>
+            </div>
+        </div>
+</div>
+<div class="footer absolute">
+    © {% now 'Y' %} <a href="https://www.advologysolution.com/">Advology Solution</a>. All rights reserved.
+</div>
+{% endblock context %}

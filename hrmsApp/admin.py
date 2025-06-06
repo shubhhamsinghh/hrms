@@ -14,6 +14,7 @@ class JobRoleAdmin(admin.ModelAdmin):
 class DepartmenteAdmin(admin.ModelAdmin):
     list_display = ['dept_name']
 
+
 @admin.register(Candidate)
 class CandidateAdmin(admin.ModelAdmin):
     list_display = ['name','dept_id','apply_for','referred','email']

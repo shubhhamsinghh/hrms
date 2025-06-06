@@ -1,0 +1,377 @@
+{% extends 'layouts/web-base.html' %}
+{% block title %} Interview Application {% endblock title%}
+{% block context %} 
+
+<style>
+    .dis-none{
+        display: none;
+    }
+    .dis-block{
+        display: block;
+    }
+</style>
+<section class="Interview_SecA">
+        <div class="container pb-5">
+            <h4 class="">INTERVIEW APPLICATION</h4>
+            <form method="post" action="{% url 'interview_details_view' %}" enctype="multipart/form-data" autocomplete="off">
+                @csrf
+            <!-- First Section -->
+            <div class="form-box mt-4">
+                <h5>Initial information</h5>
+                <div class="row g-2 row-define">
+                    <div class="col-md-4 col-12">
+                        <label class="form-label">Department</label>
+                        <select class="form-select" name="department_id" required disabled>
+                            <option value="">-- Select Department --</option>
+                            {% for dept in departments %}
+                            <option value="{{dept.id}}" {% if data.dept_id.id == dept.id %} selected {% endif %} >{{dept.dept_name}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4 col-12">
+                        <label class="form-label">Job Role</label>
+                        <select class="form-select" name="apply_for" required disabled>
+                            <option value="">-- Select Job Role --</option>
+                            {% for des in designations %}
+                            <option value="{{des.id}}" {% if data.apply_for == des.id %} selected {% endif %}>{{des.des_name}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4 col-12">
+                        <label class="form-label">Date</label>
+                        <input type="date" class="form-control" placeholder="DD | MM | YYYY" id="dateInput" name="interview_date" required value="{{data.interview_date}}" disabled>
+                    </div>
+                    <div class="col-md-4 col-12">
+                        <label class="form-label">Recruiter</label>
+                        <select class="form-select" name="recruiter" required disabled>
+                            <option value="">-- Select Recruiter --</option>
+                           {% for r in recruiters %}
+                            <option value="{{ r.id }}" <option value="{{ r.id}}" {% if data.recruiter.assign_to ==  r.id %} selected {% endif %}>{{ r.name}}</option> {{ ($candidate->recruiter->assign_to ==  $r->id) ? 'selected' : '' }}>{{ $r->name}}</option>
+                           {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4 col-12">
+                        <label class="form-label">Referred</label>
+                        <select class="form-select" name="referral_by" id="referral_by" required disabled>
+                            <option value="">-- Select --</option>
+                            <option value="Employee" {{ isset($candidate->referral_by) && $candidate->referral_by == "Employee" ? 'selected' : '' }}>Employee</option>
+                            <option value="Portal" {{ isset($candidate->referral_by) && $candidate->referral_by == "Portal" ? 'selected' : '' }}>Portal</option>
+                        </select>
+                    </div>
+                  
+                    <div class="col-md-2 col-12 ref_emp_name {{ isset($candidate->referral_by) && $candidate->referral_by == 'Employee' ? 'dis-block' : 'dis-none' }}">
+                        <label class="form-label ref_emp_name">Employee Name</label>
+                        <input type="text" class="form-control" name="ref_emp_name" maxlength="70" disabled value="{{ isset($candidate->ref_emp_name) ? $candidate->ref_emp_name : '' }}" {{ isset($candidate->ref_emp_name) ? 'required' : '' }} >
+                    </div>
+                    <div class="col-md-2 col-12 ref_emp_id {{ isset($candidate->referral_by) && $candidate->referral_by == 'Employee' ? 'dis-block' : 'dis-none' }}">
+                        <label class="form-label ref_emp_id">Employee ID</label>
+                        <input type="text" class="form-control" name="ref_emp_id" maxlength="15" disabled value="{{ isset($candidate->ref_emp_id) ? $candidate->ref_emp_id : '' }}" {{ isset($candidate->ref_emp_id) ? 'required' : '' }}>
+                    </div>
+                
+                    <div class="col-md-4 col-12 source {{ isset($candidate->referral_by) && $candidate->referral_by == 'Portal' ? 'dis-block' : 'dis-none' }}" >
+                        <label class="form-label">Source</label>
+                         <select class="form-select source_input" name="source" disabled {{ isset($candidate->referral_by) && $candidate->referral_by == 'Portal' ? 'required' : '' }}>
+                            <option value="">-- Select Source --</option>
+                            <option value="Naukri" {{ isset($candidate->source) && $candidate->source == "Naukri" ? 'selected' : '' }}>Naukri</option>
+                            <option value="LinkedIn" {{ isset($candidate->source) && $candidate->source == "LinkedIn" ? 'selected' : '' }}>LinkedIn</option>
+                        </select>
+                    </div>
+                   
+                </div>
+            </div>
+
+            <!-- Second Section: Personal Information -->
+            <div class="form-box">
+                <h5>Personal Information</h5>
+                <div class="row g-2 row-define">
+                    <div class="col-md-6">
+                        <label class="form-label">Name</label>
+                        <input type="text" class="form-control" name="name" required value="{{ isset($candidate->name) ? $candidate->name : '' }}" minlength="3" maxlength="70">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Father's Name</label>
+                        <input type="text" class="form-control" name="father_name" required value="{{ isset($candidate->father_name) ? $candidate->father_name : '' }}" minlength="3" maxlength="70">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Mobile No</label>
+                        <input type="tel" class="form-control" name="phone_no" required onkeypress="return isNumberKey(event)" value="{{ isset($candidate->phone_no) ? $candidate->phone_no : '' }}" minlength="10" maxlength="10">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Email ID</label>
+                        <input type="email" class="form-control" name="email" required value="{{ isset($candidate->email) ? $candidate->email : '' }}" maxlength="70">
+                    </div>
+                    <div class="col-md-4 col-12">
+                        <label class="form-label">DOB</label>
+                        <input type="date" class="form-control" name="dob" id="dob" required value="{{ isset($candidate->dob) ? $candidate->dob : '' }}">
+                    </div>
+                    <?php
+                    $dob = new DateTime($candidate->dob);
+                    $today = new DateTime();
+                    $age = $dob->diff($today)->y;
+                    ?>
+                    <div class="col-md-2 col-12">
+                        <label class="form-label">Age</label>
+                        <input type="text" class="form-control" readonly id="age" value="{{$age}} Years">
+                    </div>
+                    <div class="col-md-4 pe-5">
+                        <label class="form-label">Gender</label>
+                        <div class="radio-group mt-2">
+                            <div class="form-check d-flex align-items-center gap-12">
+                                <input class="form-check-input" type="radio" name="gender" id="male" value="Male" {{ isset($candidate->gender) && $candidate->gender == "Male" ? 'checked' : '' }}>
+                                <label class="form-check-label" for="male">Male</label>
+                            </div>
+                            <div class="form-check d-flex align-items-center gap-12">
+                                <input class="form-check-input" type="radio" name="gender" id="female" value="Female" {{ isset($candidate->gender) && $candidate->gender == "Female" ? 'checked' : '' }}>
+                                <label class="form-check-label" for="female">Female</label>
+                            </div>
+                            <div class="form-check d-flex align-items-center gap-12">
+                                <input class="form-check-input" type="radio" name="gender" id="others" {{ isset($candidate->gender) && $candidate->gender != "Male" && $candidate->gender != "Female" ? 'checked' : '' }}>
+                                <label class="form-check-label" for="others">Others</label>
+                            </div>
+                        </div>
+                    </div>
+                  
+                    <div class="col-md-2 col-12 oth_gender {{ isset($candidate->gender) && $candidate->gender != 'Male' && $candidate->gender != 'Female' ? 'dis-block' : 'dis-none' }}" id="oth_gender">
+                        <label class="form-label opacity-0">Other</label>
+                        <input type="text" class="form-control" name="oth_gender" required value="{{$candidate->gender}}" maxlength="50">
+                    </div>
+                   
+                    <div class="col-12">
+                        <label class="form-label">Permanent Address</label>
+                        <textarea class="form-control" rows="3" name="address" required>{{isset($candidate->address) ? $candidate->address : ''}}</textarea>
+                    </div>
+                </div>
+            </div>
+            <!-- Education Information -->
+            <div class="form-box">
+                <h5>Academic Information</h5>
+                <div class="row g-2">
+                    <div class="col-md-4 col-12 checkbox-group">
+                        <div class="row w-100 d-flex align-items-center">
+                            <div class="col-md-6 col-6 d-flex align-items-center gap-12">
+                                <input type="checkbox" id="highschool" name="highsch_lvl" {{ isset($candidate->education->high_school) ? 'checked' : ''}}>
+                                <label for="highschool">SSC (10<sup>th</sup>)</label>
+                            </div>
+                            <div class="col-md-6 col-6">
+                                <select class="form-select" name="high_school" {{ isset($candidate->education->high_school) ? 'required' : 'disabled'}}>
+                                    <option value="">-- Select Year --</option>
+                                    <?php for($i=1990;$i<=date('Y');$i++){ ?>
+                                    <option value="{{$i}}" {{ isset($candidate->education->high_school) && $candidate->education->high_school == $i ? 'selected' : ''}} >{{$i}}</option>
+                                    <?php }  ?>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-12 checkbox-group">
+                        <div class="row w-100 d-flex align-items-center">
+                            <div class="col-md-6 col-6 d-flex align-items-center gap-12">
+                                <input type="checkbox" id="intermediate" name="intermediate_lvl" {{ isset($candidate->education->intermediate) ? 'checked' : ''}}>
+                                <label for="intermediate">HSC (12<sup>th</sup>)</label>
+                            </div>
+                            <div class="col-md-6 col-6">
+                                <select class="form-select" name="intermediate" {{ isset($candidate->education->intermediate) ? 'required' : 'disabled'}}>
+                                    <option value="">-- Select Year --</option>
+                                    <?php for($i=1990;$i<=date('Y');$i++){ ?>
+                                    <option value="{{$i}}" {{ isset($candidate->education->intermediate) && $candidate->education->intermediate == $i ? 'selected' : ''}}>{{$i}}</option>
+                                    <?php }  ?>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                   
+                    <div class="col-md-4 col-12 checkbox-group">
+                        <div class="row w-100 d-flex align-items-center">
+                            <div class="col-md-6 col-6 d-flex align-items-center gap-12">
+                                <input type="checkbox" id="diploma" name="diploma_lvl" {{ isset($candidate->education->diploma) ? 'checked' : ''}} {{$candidate->education->diploma}}>
+                                <label for="diploma">Diploma</label>
+                            </div>
+                            <div class="col-md-6 col-6">
+                                <select class="form-select" name="diploma" {{ isset($candidate->education->diploma) ? 'required' : 'disabled'}}>
+                                  <option value="">-- Select Year --</option>
+                                  <?php for($i=1990;$i<=date('Y');$i++){ ?>
+                                  <option value="{{$i}}" {{ isset($candidate->education->diploma) && $candidate->education->diploma == $i ? 'selected' : ''}}>{{$i}}</option>
+                                  <?php }  ?>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-12 checkbox-group">
+                        <div class="row w-100 d-flex align-items-center">
+                            <div class="col-md-6 col-6 d-flex align-items-center gap-12">
+                                <input type="checkbox" id="graduation" name="graduation_lvl" {{ isset($candidate->education->graduation) ? 'checked' : ''}}>
+                                <label for="graduation">Graduation</label>
+                            </div>
+                            <div class="col-md-6 col-6">
+                                <select class="form-select" name="graduation" {{ isset($candidate->education->graduation) ? 'required' : 'disabled'}}>
+                                  <option value="">-- Select Year --</option>
+                                  <?php for($i=1990;$i<=date('Y');$i++){ ?>
+                                  <option value="{{$i}}" {{ isset($candidate->education->graduation) && $candidate->education->graduation == $i ? 'selected' : ''}}>{{$i}}</option>
+                                  <?php }  ?>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-12 checkbox-group">
+                        <div class="row w-100 d-flex align-items-center">
+                            <div class="col-md-6 col-6 d-flex align-items-center gap-12">
+                                <input type="checkbox" id="postgrad" name="postgrad_lvl" {{ isset($candidate->education->pg) ? 'checked' : ''}}>
+                                <label for="postgrad">Post Graduation</label>
+                            </div>
+                            <div class="col-md-6 col-6">
+                                <select class="form-select" name="pg" {{ isset($candidate->education->pg) ? 'required' : 'disabled'}}>
+                                  <option value="">-- Select Year --</option>
+                                  <?php for($i=1990;$i<=date('Y');$i++){ ?>
+                                  <option value="{{$i}}" {{ isset($candidate->education->pg) && $candidate->education->pg == $i ? 'selected' : ''}}>{{$i}}</option>
+                                  <?php }  ?>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-12 checkbox-group">
+                        <div class="row w-100 d-flex align-items-center">
+                            <div class="col-md-6 col-6 d-flex align-items-center gap-12">
+                                <input type="checkbox" id="master" name="master_lvl" {{ isset($candidate->education->master) ? 'checked' : ''}}>
+                                <label for="master">Doctorate</label>
+                            </div>
+                            <div class="col-md-6 col-6">
+                                <select class="form-select" name="master" {{ isset($candidate->education->master) ? 'required' : 'disabled'}}>
+                                  <option value="">-- Select Year --</option>
+                                  <?php for($i=1990;$i<=date('Y');$i++){ ?>
+                                  <option value="{{$i}}" {{ isset($candidate->education->master) && $candidate->education->master == $i ? 'selected' : ''}}>{{$i}}</option>
+                                  <?php }  ?>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                  
+                </div>
+            </div>
+
+            <!-- Job Experience -->
+            <div class="form-box">
+               <h5>Employment & Salary Information</h5>
+                <div class="row g-2">
+                    <div class="col-md-2 col-12 d-flex align-items-center gap-12">
+                        <input type="radio" name="exp_level" id="fresher" value="Fresher"  {{ isset($candidate->experience->exp_level) && $candidate->experience->exp_level == 'Fresher' ? 'checked' : ''}}>
+                        <label for="fresher">Fresher</label>
+                    </div>
+                    <div class="col-md-2 col-12 d-flex align-items-center gap-12">
+                        <input type="radio" name="exp_level" id="experienced" value="Experienced" {{ isset($candidate->experience->exp_level) && $candidate->experience->exp_level == 'Experienced' ? 'checked' : ''}}>
+                        <label for="experienced">Experienced</label>
+                    </div>
+
+                    <div class="col-md-8 col-12">
+                        <div class="row justify-content-end align-items-center">
+                            <div class="col-md-3 col-12 text-lg-end">
+                                <label for="">Total Work Experience</label>
+                            </div>
+                            <div class="col-md-3 col-12">
+                                <div class="row">
+                                    <div class="col-md-8 col-12 pe-lg-1">
+                                        <select class="form-select" name="exp_year" id="exp_year" required>
+                                            @for ($i = 0; $i <= 20; $i++)
+                                               <option value="{{$i}}" {{ isset($candidate->experience->exp_year) && $candidate->experience->exp_year == $i ? 'selected' : ''}}>{{$i}}</option>
+                                            @endfor
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4 ps-lg-0 col-12 d-flex align-items-center"><label class="form-label mb-0">Year</label></div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-12">
+                                <div class="row">
+                                    <div class="col-md-8 col-12 pe-lg-1">
+                                        <select class="form-select" name="exp_moth" id="exp_moth" required>
+                                             @for ($i = 0; $i <= 11; $i++)
+                                               <option value="{{$i}}" {{ isset($candidate->experience->exp_moth) && $candidate->experience->exp_moth == $i ? 'selected' : ''}}>{{$i}}</option>
+                                            @endfor
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4 ps-lg-0 col-12 d-flex align-items-center"><label class="form-label mb-0">Month</label></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-12 pt-lg-3">
+                        <label class="form-label">Current Salary (Monthly in hand)</label>
+                        <div class="row w-100 d-flex align-items-center">
+                            <div class="col-md-12 col-6  pe-lg-1">
+                                <input type="tel" class="form-control" name="curr_month_salary" onkeypress="return isNumberKey(event)" minlength="3" maxlength="40" value="{{ isset($candidate->experience->curr_month_salary) ? $candidate->experience->curr_month_salary : ''}}" maxlength="7">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-12 pt-lg-3">
+                        <label class="form-label">Current CTC (Yearly)</label>
+                        <div class="row w-100 d-flex align-items-center">
+                            <div class="col-md-12 col-6  pe-lg-1">
+                                <input type="tel" class="form-control" name="curr_year_salary" onkeypress="return isNumberKey(event)" minlength="3" maxlength="40" value="{{ isset($candidate->experience->curr_year_salary) ? $candidate->experience->curr_year_salary : ''}}" maxlength="7">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-12 pt-lg-3">
+                        <label class="form-label">Expected Salary (Monthly in hand)</label>
+                        <div class="row w-100 d-flex align-items-center">
+                            <div class="col-md-12 col-6 pe-lg-1">
+                                <input type="tel" class="form-control" name="expec_month_salary" onkeypress="return isNumberKey(event)" minlength="3" maxlength="40" value="{{ isset($candidate->experience->expec_month_salary) ? $candidate->experience->expec_month_salary : ''}}" maxlength="7">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-12 pt-lg-3">
+                        <label class="form-label">Notice Period</label>
+                        <select class="form-select" name="notice_period" required>
+                            <option value="0 Days" {{ isset($candidate->experience->notice_period) && $candidate->experience->notice_period == '0 Days' ? 'selected' : ''}} {{$candidate->experience->notice_period}}>0 Days</option>
+                            <option value="15 Days" {{ isset($candidate->experience->notice_period) && $candidate->experience->notice_period == '15 Days' ? 'selected' : ''}}>15 Days</option>
+                            <option value="30 Days" {{ isset($candidate->experience->notice_period) && $candidate->experience->notice_period == '30 Days' ? 'selected' : ''}}>30 Days</option>
+                            <option value="45 Days" {{ isset($candidate->experience->notice_period) && $candidate->experience->notice_period == '45 Days' ? 'selected' : ''}}>45 Days</option>
+                            <option value="60 Days" {{ isset($candidate->experience->notice_period) && $candidate->experience->notice_period == '60 Days' ? 'selected' : ''}}>60 Days</option>
+                            <option value="90 Days" {{ isset($candidate->experience->notice_period) && $candidate->experience->notice_period == '90 Days' ? 'selected' : ''}}>90 Days</option>
+                        </select>
+                    </div>
+                    <!-- File Uploads -->
+                    
+                    <div class="col-md-6 pe-3">
+                        <div class="attach_file">
+                            <label for="" class="doc-name">Upload Resume</label>
+                            <div class="file-box-fix">
+                                <input type="file" class="file_upload h-65" name="resume" id="resumeInput" {{ isset($candidate->experience->resume) ? '' : 'required'}}>
+                                <p id="fileName h-65" class="resume_file">📂 Drop files here</p>
+                            </div>
+                            <?php if(isset($candidate->experience->resume)){ ?>
+                            <a href="{{asset('images/resume/'.$candidate->experience->resume)}}" target="_blank">View</a>
+                            <?php } ?>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="attach_file">
+                            <label for="" class="doc-name">Portfolio</label>
+                            <div class="file-box-fix">
+                                <input type="file" class="file_upload h-65" name="portfolio" id="portInput">
+                                <p id="fileName h-65" class="portfolio_file">📂 Drop files here</p>
+                            </div>
+                        </div>
+                        <?php if(isset($candidate->experience->portfolio)){ ?>
+                          <a href="{{asset('images/portfolio/'.$candidate->experience->portfolio)}}" target="_blank">View</a>
+                        <?php } ?>
+                    </div>
+                  
+
+                    <!-- Links -->
+                    <div class="col-12">
+                        <label class="form-label">Additional Portfolio Links</label>
+                        <input type="text" class="form-control" name="links" value="{{ isset($candidate->experience->links) ? $candidate->experience->links : ''}}">
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="col-12 text-center">
+                        <button class="submit-btn mt-3 w-auto">SUBMIT</button>
+                    </div>
+                </div>
+            </div>
+            </form>
+        </div>
+    </section>
+
+ <div class="footer">
+      &copy;  {% now 'Y' %} <a href="https://www.advologysolution.com/">Advology Solution</a>. All rights reserved.
+ </div>
+ 
+{% endblock context %}

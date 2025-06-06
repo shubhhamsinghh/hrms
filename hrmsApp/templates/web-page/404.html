@@ -1,0 +1,14 @@
+{% extends 'layouts/web-base.html' %}
+{% block title %} 404 {% endblock title %}
+{% block context %}
+ <div class="main">
+        <div class="container d-flex align-items-center justify-content-center min-vh-100">
+            <div class="verification-container">
+                <h4>{{$msg}}</h4>
+            </div>
+        </div>
+</div>
+<div class="footer absolute">
+    © {% now 'Y' %} <a href="https://www.advologysolution.com/">Advology Solution</a>. All rights reserved.
+</div>
+{% endblock context %}

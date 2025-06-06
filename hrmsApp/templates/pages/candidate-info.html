@@ -23,13 +23,13 @@
         <div class="row">
             <!--<div class="col-md-1"></div>  -->
             <div class="col-md-12">
-                {% if messages %}
+                <!-- {% if messages %}
                 {% for message in messages %}
                 <div class="alert alert-success">
                     {{ message }}
                 </div>
                 {% endfor %}
-                {% endif %}
+                {% endif %} -->
                 <!-- Horizontal Form -->
                 <div class="box box-primary">
                     <div class="box-header with-border">
@@ -435,7 +435,7 @@
                                                    {% with values=mark.re_status|split:"/" %}
                                                         <div class="row">
                                                             <div class="col-md-1">
-                                                                <div class="form-group"><label><strong>Interested :</strong> </label></div>
+                                                                <div class="form-group"><label><strong>Interested&nbsp;:</strong> </label></div>
                                                             </div>
                                                             <div class="col-md-2">
                                                                 <div class="form-group"><p>{{ values.0 }}</p></div>
@@ -455,21 +455,21 @@
                                                                 <div class="form-group"><p>{{ mark.remark }}</p></div>
                                                             </div>
                                 
-                                                            <div class="col-md-2">
-                                                                <div class="form-group"><label><strong>Designation :</strong> </label></div>
+                                                            <div class="col-md-1">
+                                                                <div class="form-group"><label><strong>Designation&nbsp;:</strong> </label></div>
                                                             </div>
                                                             <div class="col-md-2">
                                                                 <div class="form-group"><p>{{ data.designation|default:"-" }}</p></div>
                                                             </div>
                                 
-                                                            <div class="col-md-2">
+                                                            <div class="col-md-1">
                                                                 <div class="form-group"><label><strong>Salary :</strong> </label></div>
                                                             </div>
                                                             <div class="col-md-2">
                                                                 <div class="form-group"><p>{{ data.salary|default:"-" }}</p></div>
                                                             </div>
                                 
-                                                            <div class="col-md-2">
+                                                            <div class="col-md-1">
                                                                 <div class="form-group"><label><strong>Doj :</strong> </label></div>
                                                             </div>
                                                             <div class="col-md-2">
